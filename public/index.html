@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="https://unpkg.com/tachyons@4.5.5/css/tachyons.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto|Slabo+27px" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
   <script>
   // Initialize Firebase
@@ -17,35 +17,38 @@
   firebase.initializeApp(config);
   </script>
   <link rel="stylesheet" href="paper.css">
+  <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-  <nav class="pa3 pa4-ns">
-    <a class="link dim black b f1 f-headline-ns tc db mb3 mb4-ns" href="#" title="Home">PAPERGALAXY</a>
-    <div class="tc pb3">
+  <nav class="db dt-l w-100 border-box pa3 ph5-l">
+    <a class="db dtc-l v-mid mid-gray link dim w-100 w-25-l tc tl-l mb2 mb0-l" href="#" title="Home">
+    </a>
+    <div class="db dtc-l v-mid w-100 w-75-l tc tr-l">
       <div hidden id="user-pic"></div>
       <div hidden id="user-name"></div>
-      <a id="sign-in" class="link dim gray f6 f5-ns dib mr3">로그인</a>
-      <a hidden id="sign-out" class="link dim gray f6 f5-ns dib mr3">로그아웃</a>
-      <a class="link dim gray f6 f5-ns dib mr3" title="Home">Home</a>
-      <a class="link dim gray f6 f5-ns dib" title="Help">Help</a>
+      <a class="link dim dark-gray f6 f5-l dib mr3 mr4-l" href="#" title="Home">Home</a>
+      <a id="sign-in" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Login">Login</a>
+      <a hidden id="sign-out" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Logout">Logout</a>
+      <a class="link dim dark-gray f6 f5-l dib" title="Press">Help</a>
     </div>
   </nav>
   <main>
+    <div id="title">
+      <a class="link dim black b f1 f-headline-ns tc db mb3 mb4-ns" href="#" title="Home">PAPERGALAXY</a>
+    </div>
+    <div id="search_bar">
+      <div align="center">
+        <form id="search-form">
+          <input type="text" id="search-box" list="paper-list" placeholder="Search for papers...">
+          <input type="button" id="search-button" value="SEARCH">
+        </form>
+        <datalist id="paper-list"></datalist>
+      </div>
+    </div>
     <div id="index">
       <div id="welcome" align="center">
-        <h3>Welcome to PAPERGALAXY!</h3>
         <h5>If this is your first time, please visit the 'help' section</h5>
-        <div id="search_bar">
-          <div align="center">
-            <form id="search-form">
-              <input type="text" id="searchbox" list="paper-list" placeholder="Search for papers...">
-              <input type="button" id="search-button" name="SEARCH">
-            </form>
-            <datalist id="paper-list"></datalist>
-            <script type="text/javascript" src="search.js"></script>
-          </div>
-        </div>
         <a id="moveToGraph" class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue">Graph</a>
         <a class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue">Score</a>
       </div>
@@ -116,6 +119,7 @@
     </div>
   </main>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="search.js"></script>
   <script src="graph-index.js"></script>
   <script src="graph.js"></script>
   <script src="paper.js"></script>

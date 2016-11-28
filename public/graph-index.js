@@ -1,5 +1,5 @@
 var w = 1000;
-var h = 600;
+var h = 400;
 var linkDistance = 200;
 var colors = d3.scale.category10();
 //var database = firebase.database();
@@ -56,7 +56,7 @@ var nodes = svg.selectAll("circle")
   .enter()
   .append("circle")
   .attr({
-    "r": 15
+    "r": 20
   })
   .style("fill", function (d, i) {
     return colors(i);
