@@ -36,6 +36,16 @@
       <div id="welcome" align="center">
         <h3>Welcome to PAPERGALAXY!</h3>
         <h5>If this is your first time, please visit the 'help' section</h5>
+        <div id="search_bar">
+          <div align="center">
+            <form id="search-form">
+              <input type="text" id="searchbox" list="paper-list" placeholder="Search for papers...">
+              <input type="button" id="search-button" name="SEARCH">
+            </form>
+            <datalist id="paper-list"></datalist>
+            <script type="text/javascript" src="search.js"></script>
+          </div>
+        </div>
         <a id="moveToGraph" class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue">Graph</a>
         <a class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue">Score</a>
       </div>
@@ -78,7 +88,7 @@
           <option value="0" disabled selected>Choose second paper</option>
         </select>
           </div>
-          <h5>Rlationship</h5>
+          <h5>Relationship</h5>
           <div class="input-field">
             <select id="relationship">
           <option value="0" disabled selected>Choose relationship</option>
