@@ -47,9 +47,9 @@ var edges = svg.selectAll("line")
   .attr("id", function (d, i) {
     return 'edge' + i
   })
-  .attr('marker-end', 'url(#arrowhead)')
   .style("stroke", "#ccc")
-  .style("pointer-events", "none");
+  .style("pointer-events", "all")
+  .style("stroke-width", "2");
 
 var nodes = svg.selectAll("circle")
   .data(dataset.nodes)
@@ -58,6 +58,13 @@ var nodes = svg.selectAll("circle")
   .attr({
     "r": 20
   })
+  .on('mouseenter', function (d) {
+    document.body.style.cursor = 'pointer';
+  })
+  .on('mouseleave', function (d) {
+    document.body.style.cursor = 'default';
+  })
+  .attr("class", "dim")
   .style("fill", function (d, i) {
     return colors(i);
   })
@@ -78,6 +85,12 @@ var nodelabels = svg.selectAll(".nodelabel")
     "class": "nodelabel",
     "stroke": "black"
   })
+  .on('mouseenter', function (d) {
+    document.body.style.cursor = 'pointer';
+  })
+  .on('mouseleave', function (d) {
+    document.body.style.cursor = 'default';
+  })
   .text(function (d) {
     return d.name;
   });
@@ -93,19 +106,17 @@ var edgepaths = svg.selectAll(".edgepath")
     'class': 'edgepath',
     'fill-opacity': 0,
     'stroke-opacity': 0,
-    'fill': 'blue',
-    'stroke': 'red',
     'id': function (d, i) {
       return 'edgepath' + i
     }
   })
-  .style("pointer-events", "none");
+  .style("pointer-events", "all");
 
 var edgelabels = svg.selectAll(".edgelabel")
   .data(dataset.edges)
   .enter()
   .append('text')
-  .style("pointer-events", "none")
+  .style("pointer-events", "all")
   .attr({
     'class': 'edgelabel',
     'id': function (d, i) {
@@ -121,7 +132,7 @@ edgelabels.append('textPath')
   .attr('xlink:href', function (d, i) {
     return '#edgepath' + i
   })
-  .style("pointer-events", "none")
+  .style("pointer-events", "all")
   .text(function (d) {
     return d.label
   });

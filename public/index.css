@@ -38,3 +38,12 @@ body {
   width: 800px;
   margin: 0 auto;
 }
+
+.dim {
+  opacity: 1;
+}
+
+.dim:hover{
+  opacity: 0.8;
+  stroke-opacity: 0.5;
+}

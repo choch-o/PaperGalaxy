@@ -47,6 +47,7 @@ databaseRef.on('value', function (snapshot) {
     .data(dataset.edges)
     .enter()
     .append("line")
+    .attr("class", "dim")
     .attr("id", function (d, i) { return 'edge' + i })
     .attr('marker-end', 'url(#arrowhead)')
     .style("stroke", "#ccc")
@@ -57,6 +58,7 @@ databaseRef.on('value', function (snapshot) {
     .enter()
     .append("circle")
     .attr({ "r": 15 })
+    .attr("class", "dim")
     .on('mouseenter', function (d) {
       document.body.style.cursor = 'pointer';
     })
