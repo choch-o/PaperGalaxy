@@ -9,8 +9,16 @@ var svg = d3.select("#graph").append("svg").attr({
   "width": w,
   "height": h
 });
+var not_first = false;
 
 databaseRef.on('value', function (snapshot) {
+  if (not_first) {
+    d3.select("svg").remove();
+    svg = d3.select("#graph").append("svg").attr({
+      "width": w,
+      "height": h
+    });
+  }
   var nodes = [];
   var edges = [];
   var data = snapshot.val();
@@ -23,6 +31,7 @@ databaseRef.on('value', function (snapshot) {
   for (var key in data['connections']) {
     var inserted = false;
     var item = data['connections'][key];
+
     edges.forEach(function (value, index, array) {
       if (value.source == item['paper1'] && value.target == item['paper2']) {
         inserted = true;
@@ -49,6 +58,7 @@ databaseRef.on('value', function (snapshot) {
         });
       }
     });
+
     if (!inserted) {
       edges.push({
         'source': item['paper1'],
@@ -65,17 +75,52 @@ databaseRef.on('value', function (snapshot) {
         }],
       });
     }
-
   }
-  console.log(edges);
-  var dataset = {
-    'nodes': nodes,
-    'edges': edges
-  };
-
+  var filteredNodes = [];
+  var filteredEdges = [];
   var searchResult = document.getElementById('search-result');
   var result = getJsonFromUrl();
-  var pid = dataset['nodes'][result.pid];
+
+  filteredNodes.push({
+    'orig_idx': Number(result.pid),
+    'name': nodes[Number(result.pid)].name,
+    'author': nodes[Number(result.pid)].author,
+  });
+
+  var i = 1;
+  edges.forEach(function (value) {
+    if (value['source'] == result.pid) {
+      filteredEdges.push({
+        source: 0,
+        target: i,
+        info: value.info
+      });
+      filteredNodes.push({
+        'orig_idx': value.target,
+        'name': nodes[Number(value['target'])].name,
+        'author': nodes[Number(value['target'])].author
+      });
+      i++;
+    }
+    else if (value['target'] == result.pid) {
+      filteredEdges.push({
+        source: i,
+        target: 0,
+        info: value.info
+      });
+      filteredNodes.push({
+        'orig_idx': value.source,
+        'name': nodes[Number(value['source'])].name,
+        'author': nodes[Number(value['source'])].author
+      });
+      i++;
+    }
+  });
+
+  var dataset = {
+    'nodes': filteredNodes,
+    'edges': filteredEdges
+  };
 
   var paper1 = document.getElementById('paper1');
   var paper2 = document.getElementById('paper2');
@@ -89,10 +134,6 @@ databaseRef.on('value', function (snapshot) {
     .size([w, h])
     .linkDistance([linkDistance])
     .charge([-700]);
-  /*
-  .theta(0.1)
-  .gravity(0.05);
-  */
   var edges = svg.selectAll("line")
     .data(dataset.edges)
     .enter()
@@ -166,8 +207,8 @@ databaseRef.on('value', function (snapshot) {
     .data(dataset.nodes)
     .enter()
     .append("circle")
-    .attr("r", function (d, i) {
-      if (i == result.pid) {
+    .attr("r", function (d) {
+      if (d.orig_idx == result.pid) {
         return 15;
       } else {
         return radius - .75;
@@ -180,7 +221,7 @@ databaseRef.on('value', function (snapshot) {
     })
     .on('mouseout', function (d) {
       document.body.style.cursor = 'default';
-      if (d.index != result.pid) {
+      if (d.orig_idx != result.pid) {
         d3.select(d3.selectAll("text")[0][d.index]).style("visibility", "hidden");
       }
     })
@@ -204,8 +245,8 @@ databaseRef.on('value', function (snapshot) {
     .style("text-anchor", "middle")
     .style("font-size", 12)
     .attr({
-      'visibility': function (d, i) {
-        if (i == result.pid) {
+      'visibility': function (d) {
+        if (d.orig_idx == result.pid) {
           return "visible"
         } else {
           return "hidden"
@@ -259,12 +300,12 @@ databaseRef.on('value', function (snapshot) {
     })
     .style("pointer-events", "none");
 
-
   force
     .nodes(dataset.nodes)
     .links(dataset.edges)
     .on("tick", tick)
     .start();
+
 
   svg.append('defs').append('marker')
     .attr({
@@ -284,22 +325,22 @@ databaseRef.on('value', function (snapshot) {
     .attr('stroke', '#ccc');
 
 
-
   function tick() {
     nodes.attr("cx", function (d) {
-        if (d.index == result.pid) {
+        if (d.orig_idx == result.pid) {
           return d.x = w / 2;
         } else {
           return d.x = Math.max(radius + 200, Math.min(w - radius - 200, d.x));
         }
       })
       .attr("cy", function (d) {
-        if (d.index == result.pid) {
+        if (d.orig_idx == result.pid) {
           return d.y = h / 2;
         } else {
           return d.y = Math.max(radius + 10, Math.min(h - radius, d.y));
         }
       });
+
 
     edges.attr({
       "x1": function (d) {
@@ -316,20 +357,18 @@ databaseRef.on('value', function (snapshot) {
       }
     });
 
-    nodelabels.attr("x", function (d) {
-        return d.x;
-      })
-      .attr("y", function (d) {
-        if (d.index == result.pid) {
-          return d.y - 20;
-        } else {
-          return d.y - 10;
-        }
-      });
+
+    nodelabels.attr("x", function (d) { return d.x; })
+              .attr("y", function (d) {
+                if (d.orig_idx == result.pid) {
+                  return d.y - 20;
+                } else {
+                  return d.y - 10;
+                }
+              });
 
     edgepaths.attr('d', function (d) {
       var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
-      //console.log(d)
       return path
     });
 
@@ -343,8 +382,10 @@ databaseRef.on('value', function (snapshot) {
         return 'rotate(0)';
       }
     });
+
   }
 
+  not_first = true;
 
 });
 
