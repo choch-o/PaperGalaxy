@@ -101,8 +101,7 @@ databaseRef.on('value', function (snapshot) {
         'author': nodes[Number(value['target'])].author
       });
       i++;
-    }
-    else if (value['target'] == result.pid) {
+    } else if (value['target'] == result.pid) {
       filteredEdges.push({
         source: i,
         target: 0,
@@ -150,10 +149,12 @@ databaseRef.on('value', function (snapshot) {
       document.body.style.cursor = 'default';
     })
     .on('click', function (d, i) {
+
       if (document.getElementById('tableContent') != null) {
+
         document.getElementById('tableConnection').removeChild(document.getElementById('tableContent'));
       }
-
+      var random = Math.random().toString().replace('.', 'a');
       tableContent = '';
       d.info.forEach(function (value, index, array) {
         tableContent += '<tr class="striped--light-gray">';
@@ -168,8 +169,8 @@ databaseRef.on('value', function (snapshot) {
         }
         tableContent +=
           '<td class="pv2 ph3">' + value.description + '</td>' +
-          '<td id="plus' + index + '" class="pv2 ph3 green grow">+' + value.plus + '</td>' +
-          '<td id="minus' + index + '" class="pv2 ph3 dark-red grow">-' + value.minus + '</td>' +
+          '<td id="plus' + random + index + '" class="pv2 ph3 green grow">+' + value.plus + '</td>' +
+          '<td id="minus' + random + index + '" class="pv2 ph3 dark-red grow">-' + value.minus + '</td>' +
           '</tr>';
       });
       document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
@@ -186,18 +187,17 @@ databaseRef.on('value', function (snapshot) {
         '</table>'
       );
       d.info.forEach(function (value, index, array) {
-        document.getElementById('plus' + index).addEventListener('click', function () {
+        document.getElementById('plus' + random + index).addEventListener('click', function () {
           var updates = {};
           updates['/connections/' + value.key + '/plus'] = value.plus + 1;
           database.ref().update(updates);
-          document.getElementById('plus' + index).innerText = '+' + (value.plus + 1);
+          document.getElementById('plus' + random + index).innerText = '+' + (value.plus + 1);
         });
-        document.getElementById('minus' + index).addEventListener('click', function () {
+        document.getElementById('minus' + random + index).addEventListener('click', function () {
           var updates = {};
           updates['/connections/' + value.key + '/minus'] = value.minus + 1;
           database.ref().update(updates);
-          document.getElementById('minus' + index).innerText = '-' + (value.minus + 1);
-
+          document.getElementById('minus' + random + index).innerText = '-' + (value.minus + 1);
         });
       })
       document.getElementById("modal-show-connection").classList.remove('dn');
@@ -280,7 +280,7 @@ databaseRef.on('value', function (snapshot) {
     .text(function (d) {
       return d.label
     });
-
+/*
   var edgepaths = svg.selectAll(".edgepath")
     .data(dataset.edges)
     .enter()
@@ -299,7 +299,7 @@ databaseRef.on('value', function (snapshot) {
       }
     })
     .style("pointer-events", "none");
-
+*/
   force
     .nodes(dataset.nodes)
     .links(dataset.edges)
@@ -358,20 +358,22 @@ databaseRef.on('value', function (snapshot) {
     });
 
 
-    nodelabels.attr("x", function (d) { return d.x; })
-              .attr("y", function (d) {
-                if (d.orig_idx == result.pid) {
-                  return d.y - 20;
-                } else {
-                  return d.y - 10;
-                }
-              });
-
+    nodelabels.attr("x", function (d) {
+        return d.x;
+      })
+      .attr("y", function (d) {
+        if (d.orig_idx == result.pid) {
+          return d.y - 20;
+        } else {
+          return d.y - 10;
+        }
+      });
+/*
     edgepaths.attr('d', function (d) {
       var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
       return path
     });
-
+*/
     edgelabels.attr('transform', function (d, i) {
       if (d.target.x < d.source.x) {
         bbox = this.getBBox();
