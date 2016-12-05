@@ -1,8 +1,3 @@
-#graph {
-  display: block;
-  margin: 0 auto;
-  text-align: center;
-}
 
 #search-box {
   width: 200px;
@@ -13,6 +8,14 @@
 
 #search-button {
   vertical-align: middle;
+}
+
+#leaderboard {
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  margin-right: 40px;
+  margin-top: 90px;
 }
 
 #fixed-button {

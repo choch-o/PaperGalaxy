@@ -41,6 +41,57 @@
     </div>
   </nav>
   <div id="graph"></div>
+
+  <table id="leaderboard" class="collapse ba br2 b--navy pv2 ph3">
+    <tbody class="tc">
+      <tr class="white bg-navy">
+        <th class="pv2 ph3 tl f6 fw6 ttu">#</th>
+        <th class="tr f6 ttu fw6 pv2 ph3">Username</th>
+        <th class="tr f6 ttu fw6 pv2 ph3">Points</th>
+      </tr>
+      <tr class="navy bg-white">
+        <td class="pv2 ph3">1</td>
+        <td class="pv2 ph3">user one</td>
+        <td class="pv2 ph3">12435 pts</td>
+      </tr>
+      <tr class="navy bg-white">
+        <td class="pv2 ph3">2</td>
+        <td class="pv2 ph3">user two</td>
+        <td class="pv2 ph3">10035 pts</td>
+      </tr>
+      <tr class="navy bg-white">
+        <td class="pv2 ph3">3</td>
+        <td class="pv2 ph3 tc">user three</td>
+        <td class="pv2 ph3">9435 pts</td>
+      </tr>
+      <tr class="navy bg-white">
+        <td class="pv2 ph3"></td>
+        <td class="pv2 ph3">...</td>
+        <td class="pv2 ph3"></td>
+      </tr>
+      <tr class="navy bg-white">
+        <td class="pv2 ph3">55</td>
+        <td class="pv2 ph3">user ff</td>
+        <td class="pv2 ph3 tc">150 pts</td>
+      </tr>
+      <tr class="white bg-light-red">
+        <td class="pv2 ph3">56</td>
+        <td class="pv2 ph3">YOU</td>
+        <td class="pv2 ph3">135 pts</td>
+      </tr>
+      <tr class="navy bg-white">
+        <td class="pv2 ph3">57</td>
+        <td class="pv2 ph3">user fs</td>
+        <td class="pv2 ph3">132 pts</td>
+      </tr>
+      <tr class="navy bg-white">
+        <td class="pv2 ph3"></td>
+        <td class="pv2 ph3">...</td>
+        <td class="pv2 ph3"></td>
+      </tr>
+    </tbody>
+  </table>
+
   <div id="modal-add-paper" class="modal dn">
     <div class="modal-content">
       <h4>Add a new paper</h4>
@@ -54,7 +105,7 @@
         <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
           type="text" value="" id="paper-author">
       </div>
-      <a id="sendNewPaper" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">SEND</a>
+      <a id="sendNewPaper" class="f6 link dim ba ph3 pv2 mb2 dib navy">ADD</a>
     </div>
   </div>
   <div id="modal-add-connection" class="modal dn">
@@ -80,7 +131,7 @@
         <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
           type="text" value="" id="connection-description">
       </div>
-      <a id="sendNewConnection" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">SEND</a>
+      <a id="sendNewConnection" class="f6 link dim ba ph3 pv2 mb2 dib navy">ADD</a>
     </div>
   </div>
   <div id="modal-show-paper" class="modal dn">
@@ -88,17 +139,17 @@
       <h4>Paper Information</h4>
       <h5 id="paperInfoTitle">Title</h5>
       <h5 id="paperInfoAuthor">Author</h5>
-      <a id="closeModalPaper" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">CLOSE</a>
+      <a id="closeModalPaper" class="f6 link dim ba ph3 pv2 mb2 dib navy">CLOSE</a>
     </div>
   </div>
   <div id="modal-show-connection" class="modal dn">
     <div id="tableConnection" class="modal-content">
     </div>
   </div>
-  <a class="dn f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue" id="fixed-button">add</a>
+  <a class="f6 link dim ba ph3 pv2 mb2 dib navy" id="fixed-button">add</a>
   <div class="dn" id="buttons">
-    <a class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue" id="fixed-button-top">NEW PAPER</a>
-    <a class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue" id="fixed-button-bottom">NEW CONNECTION</a>
+    <a class="f6 link dim ba ph3 pv2 mb2 dib navy" id="fixed-button-top">NEW PAPER</a>
+    <a class="f6 link dim ba ph3 pv2 mb2 dib navy" id="fixed-button-bottom">NEW CONNECTION</a>
   </div>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="search.js"></script>
