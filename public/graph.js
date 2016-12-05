@@ -21,18 +21,49 @@ databaseRef.on('value', function (snapshot) {
     });
   });
   for (var key in data['connections']) {
+    var inserted = false;
     var item = data['connections'][key];
-    edges.push({
-      'source': item['paper1'],
-      'target': item['paper2'],
-      'label': item['relationship'],
-      'description': item['description'],
-      'name': item['name'],
-      'uid': item['uid'],
-      'plus': item['plus'],
-      'minus': item['minus']
+    edges.forEach(function (value, index, array) {
+      if (value.source == item['paper1'] && value.target == item['paper2']) {
+        inserted = true;
+        value.info.push({
+          'label': item['relationship'],
+          'description': item['description'],
+          'name': item['name'],
+          'uid': item['uid'],
+          'plus': item['plus'],
+          'minus': item['minus']
+        });
+      }
+      if (value.source == item['paper2'] && value.target == item['paper1']) {
+        inserted = true;
+        value.info.push({
+          'label': item['relationship'],
+          'description': item['description'],
+          'name': item['name'],
+          'uid': item['uid'],
+          'plus': item['plus'],
+          'minus': item['minus']
+        });
+      }
     });
+    if (!inserted) {
+      edges.push({
+        'source': item['paper1'],
+        'target': item['paper2'],
+        'info': [{
+          'label': item['relationship'],
+          'description': item['description'],
+          'name': item['name'],
+          'uid': item['uid'],
+          'plus': item['plus'],
+          'minus': item['minus']
+        }],
+      });
+    }
+
   }
+  console.log(edges);
   var dataset = {
     'nodes': nodes,
     'edges': edges
@@ -41,23 +72,23 @@ databaseRef.on('value', function (snapshot) {
   var searchResult = document.getElementById('search-result');
   var result = getJsonFromUrl();
   var pid = dataset['nodes'][result.pid];
-/*
-  var paper1 = document.getElementById('paper1');
-  var paper2 = document.getElementById('paper2');
+  /*
+    var paper1 = document.getElementById('paper1');
+    var paper2 = document.getElementById('paper2');
 
-  for (var i = 0; i < nodes.length; i++) {
-    paper1.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
-    paper2.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
-  }
+    for (var i = 0; i < nodes.length; i++) {
+      paper1.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
+      paper2.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
+    }
 
-  var force = d3.layout.force()
-    .size([w, h])
-    .linkDistance([linkDistance])
-    .charge([-700]);
-    /*
-    .theta(0.1)
-    .gravity(0.05);
-*/
+    var force = d3.layout.force()
+      .size([w, h])
+      .linkDistance([linkDistance])
+      .charge([-700]);
+      /*
+      .theta(0.1)
+      .gravity(0.05);
+  */
   var edges = svg.selectAll("line")
     .data(dataset.edges)
     .enter()
@@ -74,13 +105,52 @@ databaseRef.on('value', function (snapshot) {
       document.body.style.cursor = 'default';
     })
     .on('click', function (d, i) {
-      document.getElementById('tableContent').insertAdjacentHTML('beforeend',
+      if (document.getElementById('tableContent') != null) {
+        document.getElementById('tableConnection').removeChild(document.getElementById('tableContent'));
+      }
+      var tableMotivation = '';
+      var tableTechnique = '';
+      var tableWorkflow = '';
+      d.info.forEach(function (value, index, array) {
+        if (value.label == 0) {
+          tableMotivation +=
+            '<tr class="striped--light-gray">' +
+            '<td class="pv2 ph3">Similar Motivation</td>' +
+            '<td class="pv2 ph3">' + value.description + '</td>' +
+            '<td class="pv2 ph3">' + value.plus + '</td>' +
+            '<td class="pv2 ph3">' + value.minus + '</td>' +
+            '</tr>'
+        }
+        if (value.label == 1) {
+          tableTechnique +=
+            '<tr class="striped--light-gray">' +
+            '<td class="pv2 ph3">Similar Technique</td>' +
+            '<td class="pv2 ph3">' + value.description + '</td>' +
+            '<td class="pv2 ph3">' + value.plus + '</td>' +
+            '<td class="pv2 ph3">' + value.minus + '</td>' +
+            '</tr>'
+        }
+        if (value.label == 2) {
+          tableWorkflow +=
+            '<tr class="striped--light-gray">' +
+            '<td class="pv2 ph3">Similar Workflow</td>' +
+            '<td class="pv2 ph3">' + value.description + '</td>' +
+            '<td class="pv2 ph3">' + value.plus + '</td>' +
+            '<td class="pv2 ph3">' + value.minus + '</td>' +
+            '</tr>'
+        }
+      });
+      document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
+        '<tbody id="tableContent">' +
         '<tr class="striped--light-gray">' +
-        '<td class="pv2 ph3">' + d.label + '</td>' +
-        '<td class="pv2 ph3">' + d.description + '</td>' +
-        '<td class="pv2 ph3">' + d.plus + '</td>' +
-        '<td class="pv2 ph3">' + d.minus + '</td>' +
-        '</tr>');
+        '<th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>' +
+        '<th class="pv2 ph3 tl f6 fw6 ttu">Description</th>' +
+        '<th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>' +
+        '<th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>' +
+        '</tr>' +
+        tableMotivation + tableTechnique + tableWorkflow +
+        '</tbody>'
+      );
       document.getElementById("modal-show-connection").classList.remove('dn');
     });
 
@@ -120,38 +190,22 @@ databaseRef.on('value', function (snapshot) {
     .data(dataset.nodes)
     .enter()
     .append("text")
-    .text(function (d) { return d.name; })
+    .text(function (d) {
+      return d.name;
+    })
     .style("text-anchor", "middle")
     .style("font-size", 12)
-    .attr( {
+    .attr({
       'visibility': function (d, i) {
         if (i == result.pid) {
           return "visible"
-        }
-        else {
+        } else {
           return "hidden"
         }
       }
     });
 
-  var edgepaths = svg.selectAll(".edgepath")
-    .data(dataset.edges)
-    .enter()
-    .append('path')
-    .attr({
-      'd': function (d) {
-        return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
-      },
-      'class': 'edgepath',
-      'fill-opacity': 0,
-      'stroke-opacity': 0,
-      'fill': 'blue',
-      'stroke': 'red',
-      'id': function (d, i) {
-        return 'edgepath' + i
-      }
-    })
-    .style("pointer-events", "none");
+
 
   var edgelabels = svg.selectAll(".edgelabel")
     .data(dataset.edges)
@@ -178,12 +232,31 @@ databaseRef.on('value', function (snapshot) {
       return d.label
     });
 
+  var edgepaths = svg.selectAll(".edgepath")
+    .data(dataset.edges)
+    .enter()
+    .append('path')
+    .attr({
+      'd': function (d) {
+        return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
+      },
+      'class': 'edgepath',
+      'fill-opacity': 0,
+      'stroke-opacity': 0,
+      'fill': 'blue',
+      'stroke': 'red',
+      'id': function (d, i) {
+        return 'edgepath' + i
+      }
+    })
+    .style("pointer-events", "none");
+
 
   force
-  .nodes(dataset.nodes)
-  .links(dataset.edges)
-  .on("tick", tick)
-  .start();
+    .nodes(dataset.nodes)
+    .links(dataset.edges)
+    .on("tick", tick)
+    .start();
 
   svg.append('defs').append('marker')
     .attr({
@@ -203,21 +276,22 @@ databaseRef.on('value', function (snapshot) {
     .attr('stroke', '#ccc');
 
 
+
   function tick() {
     nodes.attr("cx", function (d) {
-            if (d.index == result.pid) {
-              return d.x = w / 2;
-            }
-            else {
-              return d.x = Math.max(radius + 200, Math.min(w - radius - 200, d.x));
-            }})
-         .attr("cy", function (d) {
-            if (d.index == result.pid) {
-              return d.y = h / 2;
-            }
-            else {
-              return d.y = Math.max(radius + 10, Math.min(h - radius, d.y));
-            }});
+        if (d.index == result.pid) {
+          return d.x = w / 2;
+        } else {
+          return d.x = Math.max(radius + 200, Math.min(w - radius - 200, d.x));
+        }
+      })
+      .attr("cy", function (d) {
+        if (d.index == result.pid) {
+          return d.y = h / 2;
+        } else {
+          return d.y = Math.max(radius + 10, Math.min(h - radius, d.y));
+        }
+      });
 
     edges.attr({
       "x1": function (d) {
@@ -234,7 +308,9 @@ databaseRef.on('value', function (snapshot) {
       }
     });
 
-    nodelabels.attr("x", function (d) { return d.x; })
+    nodelabels.attr("x", function (d) {
+        return d.x;
+      })
       .attr("y", function (d) {
         if (d.index == result.pid) {
           return d.y - 20;
@@ -260,6 +336,8 @@ databaseRef.on('value', function (snapshot) {
       }
     });
   }
+
+
 });
 
 
@@ -267,7 +345,7 @@ databaseRef.on('value', function (snapshot) {
 function getJsonFromUrl() {
   var query = location.search.substr(1);
   var result = {};
-  query.split("&").forEach(function(part) {
+  query.split("&").forEach(function (part) {
     var item = part.split("=");
     result[item[0]] = decodeURIComponent(item[1]);
   });

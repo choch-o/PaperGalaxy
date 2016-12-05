@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.5.5/css/tachyons.min.css" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto|Slabo+27px" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
-    <script>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.5.5/css/tachyons.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto|Slabo+27px" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+  <script>
     // Initialize Firebase
     var config = {
       apiKey: "AIzaSyC0NjHnNTm0454Yuv945LdcLmt-38AGBuk",
@@ -16,26 +17,26 @@
     };
     firebase.initializeApp(config);
     </script>
-    <link rel="stylesheet" href="result.css">
-  </head>
-  <body>
-    <nav class="db dt-l w-100 border-box pa3 ph5-l">
-      <a class="db dtc-l v-mid mid-gray link dim w-100 w-25-l tc tl-l mb2 mb0-l" href="/" title="Home">
-        <p>PAPERGALAXY</p>
-      </a>
-      <div class="db dtc-l v-mid w-100 w-75-l tc tr-l">
-        <div hidden id="user-pic"></div>
-        <div hidden id="user-name"></div>
-        <a class="link dim dark-gray f6 f5-l dib mr3 mr4-l" href="/" title="Home">Home</a>
-        <a id="sign-in" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Login">Login</a>
-        <a hidden id="sign-out" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Logout">Logout</a>
-        <a class="link dim dark-gray f6 f5-l dib" title="Press">Help</a>
-      </div>
-    </nav>
-    <div id="graph"></div>
+  <link rel="stylesheet" href="result.css">
+</head>
 
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<body>
+  <nav class="db dt-l w-100 border-box pa3 ph5-l">
+    <a class="db dtc-l v-mid mid-gray link dim w-100 w-25-l tc tl-l mb2 mb0-l" href="/" title="Home">
+      <p>PAPERGALAXY</p>
+    </a>
+    <div class="db dtc-l v-mid w-100 w-75-l tc tr-l">
+      <div hidden id="user-pic"></div>
+      <div hidden id="user-name"></div>
+      <a class="link dim dark-gray f6 f5-l dib mr3 mr4-l" href="/" title="Home">Home</a>
+      <a id="sign-in" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Login">Login</a>
+      <a hidden id="sign-out" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Logout">Logout</a>
+      <a class="link dim dark-gray f6 f5-l dib" title="Press">Help</a>
+    </div>
+  </nav>
+  <div id="graph"></div>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="graph.js"></script>
+</body>
 
-    <script src="graph.js"></script>
-  </body>
 </html>

@@ -63,70 +63,6 @@
         <a class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue" id="fixed-button-top">NEW PAPER</a>
         <a class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue" id="fixed-button-bottom">NEW CONNECTION</a>
       </div>
-      <div id="modal-add-paper" class="modal dn">
-        <div class="modal-content">
-          <h4>Add a new paper</h4>
-          <h5>Title</h5>
-          <div class="cf">
-            <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
-              type="text" name="Email_Adress" value="" id="paper-title">
-          </div>
-          <h5>Author</h5>
-          <div class="cf">
-            <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
-              type="text" value="" id="paper-author">
-          </div>
-          <a id="sendNewPaper" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">SEND</a>
-        </div>
-      </div>
-      <div id="modal-add-connection" class="modal dn">
-        <div class="modal-content">
-          <h4>Create a new edge</h4>
-          <h5>Paper1</h5>
-          <select id="paper1">
-          <option value="0" disabled selected>Choose first paper</option>
-          </select>
-          <h5>Paper2</h5>
-          <select id="paper2">
-          <option value="0" disabled selected>Choose second paper</option>
-          </select>
-          <h5>Relationship</h5>
-          <select id="relationship">
-          <option value="0" disabled selected>Choose relationship</option>
-          <option value="1">Similar motivation</option>
-          <option value="2">Similar technique</option>
-          <option value="3">Similar workflow</option>
-          </select>
-          <h5>Description</h5>
-          <div class="cf">
-            <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
-              type="text" value="" id="connection-description">
-          </div>
-          <a id="sendNewConnection" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">SEND</a>
-        </div>
-      </div>
-      <div id="modal-show-paper" class="modal dn">
-        <div class="modal-content">
-          <h4>Paper Information</h4>
-          <h5 id="paperInfoTitle">Title</h5>
-          <h5 id="paperInfoAuthor">Author</h5>
-          <a id="closeModalPaper" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">CLOSE</a>
-        </div>
-      </div>
-      <div id="modal-show-connection" class="modal dn">
-        <div class="modal-content">
-          <table id="tableConnection" class="collapse ba br2 b--black-10 pv2 ph3">
-            <tbody id="tableContent">
-              <tr class="striped--light-gray">
-                <th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>
-                <th class="pv2 ph3 tl f6 fw6 ttu">Description</th>
-                <th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>
-                <th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
       <div id="graph">
       </div>
     </div>
@@ -135,6 +71,62 @@
       <h4 id="dashboardScore"></h4>
     </div>
     <div class="dn" id="score">
+    </div>
+    <div id="modal-add-paper" class="modal dn">
+      <div class="modal-content">
+        <h4>Add a new paper</h4>
+        <h5>Title</h5>
+        <div class="cf">
+          <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
+            type="text" name="Email_Adress" value="" id="paper-title">
+        </div>
+        <h5>Author</h5>
+        <div class="cf">
+          <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
+            type="text" value="" id="paper-author">
+        </div>
+        <a id="sendNewPaper" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">SEND</a>
+      </div>
+    </div>
+    <div id="modal-add-connection" class="modal dn">
+      <div class="modal-content">
+        <h4>Create a new edge</h4>
+        <h5>Paper1</h5>
+        <select id="paper1">
+          <option value="0" disabled selected>Choose first paper</option>
+          </select>
+        <h5>Paper2</h5>
+        <select id="paper2">
+          <option value="0" disabled selected>Choose second paper</option>
+          </select>
+        <h5>Relationship</h5>
+        <select id="relationship">
+          <option value="0" disabled selected>Choose relationship</option>
+          <option value="1">Similar motivation</option>
+          <option value="2">Similar technique</option>
+          <option value="3">Similar workflow</option>
+          </select>
+        <h5>Description</h5>
+        <div class="cf">
+          <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
+            type="text" value="" id="connection-description">
+        </div>
+        <a id="sendNewConnection" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">SEND</a>
+      </div>
+    </div>
+    <div id="modal-show-paper" class="modal dn">
+      <div class="modal-content">
+        <h4>Paper Information</h4>
+        <h5 id="paperInfoTitle">Title</h5>
+        <h5 id="paperInfoAuthor">Author</h5>
+        <a id="closeModalPaper" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">CLOSE</a>
+      </div>
+    </div>
+    <div id="modal-show-connection" class="modal dn">
+      <div class="modal-content">
+        <table id="tableConnection" class="collapse ba br2 b--black-10 pv2 ph3">
+        </table>
+      </div>
     </div>
   </main>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
