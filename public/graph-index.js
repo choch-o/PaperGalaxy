@@ -1,5 +1,6 @@
 var w = 1000;
-var h = 400;
+var h = 600;
+var radius = 20;
 var linkDistance = 200;
 var colors = d3.scale.category10();
 //var database = firebase.database();
@@ -38,6 +39,7 @@ var force = d3.layout.force()
   .charge([-500])
   .theta(0.1)
   .gravity(0.05)
+  .on("tick", tick)
   .start();
 
 var edges = svg.selectAll("line")
@@ -56,7 +58,7 @@ var nodes = svg.selectAll("circle")
   .enter()
   .append("circle")
   .attr({
-    "r": 20
+    "r": radius
   })
   .on('mouseenter', function (d) {
     document.body.style.cursor = 'pointer';
@@ -156,7 +158,30 @@ svg.append('defs').append('marker')
   .attr('stroke', '#ccc');
 
 
-force.on("tick", function () {
+function tick() {
+  nodes.attr("r", function (d) {
+    if (d.index == 0) {
+      return 25;
+    }
+    else {
+      return 20;
+    }
+  });
+
+  nodes.attr("cx", function (d) {
+    if (d.index == 0) {
+      return d.x = w / 2;
+    }
+    else {
+      return d.x = Math.max(radius, Math.min(w - radius, d.x));
+    }})
+       .attr("cy", function (d) {
+         if (d.index == 0) {
+           return d.y = h / 2;
+         }
+         else {
+           return d.y = Math.max(radius, Math.min(h - radius, d.y));
+         }});
 
   edges.attr({
     "x1": function (d) {
@@ -173,15 +198,6 @@ force.on("tick", function () {
     }
   });
 
-  nodes.attr({
-    "cx": function (d) {
-      return d.x;
-    },
-    "cy": function (d) {
-      return d.y;
-    }
-  });
-
   nodelabels.attr("x", function (d) {
       return d.x;
     })
@@ -191,7 +207,6 @@ force.on("tick", function () {
 
   edgepaths.attr('d', function (d) {
     var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
-    //console.log(d)
     return path
   });
 
@@ -205,4 +220,6 @@ force.on("tick", function () {
       return 'rotate(0)';
     }
   });
-});
+
+
+}

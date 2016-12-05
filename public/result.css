@@ -1,0 +1,13 @@
+#graph {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.nodelabel {
+  display: none;
+}
+
+.nodelabel:hover {
+  display: inline;
+}
