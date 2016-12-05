@@ -32,7 +32,8 @@ databaseRef.on('value', function (snapshot) {
           'name': item['name'],
           'uid': item['uid'],
           'plus': item['plus'],
-          'minus': item['minus']
+          'minus': item['minus'],
+          'key': key
         });
       }
       if (value.source == item['paper2'] && value.target == item['paper1']) {
@@ -43,7 +44,8 @@ databaseRef.on('value', function (snapshot) {
           'name': item['name'],
           'uid': item['uid'],
           'plus': item['plus'],
-          'minus': item['minus']
+          'minus': item['minus'],
+          'key': key
         });
       }
     });
@@ -57,7 +59,9 @@ databaseRef.on('value', function (snapshot) {
           'name': item['name'],
           'uid': item['uid'],
           'plus': item['plus'],
-          'minus': item['minus']
+          'minus': item['minus'],
+          'key': key
+
         }],
       });
     }
@@ -85,10 +89,10 @@ databaseRef.on('value', function (snapshot) {
     .size([w, h])
     .linkDistance([linkDistance])
     .charge([-700]);
-    /*
-    .theta(0.1)
-    .gravity(0.05);
-    */
+  /*
+  .theta(0.1)
+  .gravity(0.05);
+  */
   var edges = svg.selectAll("line")
     .data(dataset.edges)
     .enter()
@@ -108,37 +112,24 @@ databaseRef.on('value', function (snapshot) {
       if (document.getElementById('tableContent') != null) {
         document.getElementById('tableConnection').removeChild(document.getElementById('tableContent'));
       }
-      var tableMotivation = '';
-      var tableTechnique = '';
-      var tableWorkflow = '';
+
+      tableContent = '';
       d.info.forEach(function (value, index, array) {
-        if (value.label == 1) {
-          tableMotivation +=
-            '<tr class="striped--light-gray">' +
-            '<td class="pv2 ph3">Similar Motivation</td>' +
-            '<td class="pv2 ph3">' + value.description + '</td>' +
-            '<td class="pv2 ph3">' + value.plus + '</td>' +
-            '<td class="pv2 ph3">' + value.minus + '</td>' +
-            '</tr>'
+        tableContent += '<tr class="striped--light-gray">';
+        if (value.label == 0) {
+          tableContent += '<td class="pv2 ph3">No Response</td>';
+        } else if (value.label == 1) {
+          tableContent += '<td class="pv2 ph3">Similar Motivation</td>';
+        } else if (value.label == 2) {
+          tableContent += '<td class="pv2 ph3">Similar Technique</td>';
+        } else if (value.label == 3) {
+          tableContent += '<td class="pv2 ph3">Similar Workflow</td>';
         }
-        if (value.label == 2) {
-          tableTechnique +=
-            '<tr class="striped--light-gray">' +
-            '<td class="pv2 ph3">Similar Technique</td>' +
-            '<td class="pv2 ph3">' + value.description + '</td>' +
-            '<td class="pv2 ph3">' + value.plus + '</td>' +
-            '<td class="pv2 ph3">' + value.minus + '</td>' +
-            '</tr>'
-        }
-        if (value.label == 3) {
-          tableWorkflow +=
-            '<tr class="striped--light-gray">' +
-            '<td class="pv2 ph3">Similar Workflow</td>' +
-            '<td class="pv2 ph3">' + value.description + '</td>' +
-            '<td class="pv2 ph3">' + value.plus + '</td>' +
-            '<td class="pv2 ph3">' + value.minus + '</td>' +
-            '</tr>'
-        }
+        tableContent +=
+          '<td class="pv2 ph3">' + value.description + '</td>' +
+          '<td id="plus' + index + '" class="pv2 ph3 green grow">+' + value.plus + '</td>' +
+          '<td id="minus' + index + '" class="pv2 ph3 dark-red grow">-' + value.minus + '</td>' +
+          '</tr>';
       });
       document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
         '<table id="tableContent" class="collapse ba br2 b--black-10 pv2 ph3">' +
@@ -149,10 +140,25 @@ databaseRef.on('value', function (snapshot) {
         '<th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>' +
         '<th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>' +
         '</tr>' +
-        tableMotivation + tableTechnique + tableWorkflow +
+        tableContent +
         '</tbody>' +
         '</table>'
       );
+      d.info.forEach(function (value, index, array) {
+        document.getElementById('plus' + index).addEventListener('click', function () {
+          var updates = {};
+          updates['/connections/' + value.key + '/plus'] = value.plus + 1;
+          database.ref().update(updates);
+          document.getElementById('plus' + index).innerText = '+' + (value.plus + 1);
+        });
+        document.getElementById('minus' + index).addEventListener('click', function () {
+          var updates = {};
+          updates['/connections/' + value.key + '/minus'] = value.minus + 1;
+          database.ref().update(updates);
+          document.getElementById('minus' + index).innerText = '-' + (value.minus + 1);
+
+        });
+      })
       document.getElementById("modal-show-connection").classList.remove('dn');
     });
 
