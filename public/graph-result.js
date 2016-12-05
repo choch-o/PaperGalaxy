@@ -72,7 +72,7 @@ databaseRef.on('value', function (snapshot) {
   var searchResult = document.getElementById('search-result');
   var result = getJsonFromUrl();
   var pid = dataset['nodes'][result.pid];
-
+/*
   var paper1 = document.getElementById('paper1');
   var paper2 = document.getElementById('paper2');
 
@@ -80,6 +80,7 @@ databaseRef.on('value', function (snapshot) {
     paper1.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
     paper2.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
   }
+  */
   /*
       var force = d3.layout.force()
         .size([w, h])
@@ -120,7 +121,6 @@ databaseRef.on('value', function (snapshot) {
             '<td class="pv2 ph3">' + value.plus + '</td>' +
             '<td class="pv2 ph3">' + value.minus + '</td>' +
             '</tr>'
-
         }
         if (value.label == 1) {
           tableTechnique +=
@@ -142,7 +142,6 @@ databaseRef.on('value', function (snapshot) {
         }
       });
       document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
-        '<table class="collapse ba br2 b--black-10 pv2 ph3">' +
         '<tbody id="tableContent">' +
         '<tr class="striped--light-gray">' +
         '<th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>' +
@@ -150,35 +149,8 @@ databaseRef.on('value', function (snapshot) {
         '<th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>' +
         '<th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>' +
         '</tr>' +
-        tableMotivation +
-        '</tbody>' +
-        '</table>'
-      );
-      document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
-        '<table class="collapse ba br2 b--black-10 pv2 ph3">' +
-        '<tbody id="tableContent">' +
-        '<tr class="striped--light-gray">' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Description</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>' +
-        '</tr>' +
-        tableTechnique +
-        '</tbody>' +
-        '</table>'
-      );
-      document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
-        '<table class="collapse ba br2 b--black-10 pv2 ph3">' +
-        '<tbody id="tableContent">' +
-        '<tr class="striped--light-gray">' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Description</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>' +
-        '</tr>' +
-        tableWorkflow +
-        '</tbody>' +
-        '</table>'
+        tableMotivation + tableTechnique + tableWorkflow +
+        '</tbody>'
       );
       document.getElementById("modal-show-connection").classList.remove('dn');
     });

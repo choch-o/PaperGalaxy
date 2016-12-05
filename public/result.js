@@ -12,7 +12,7 @@ databaseRef.on('value', function (snapshot) {
       'author': data['authors'][index]
     });
   });
-  
+
   console.log(data['nodes'][result]);
 }
 function getJsonFromUrl() {
