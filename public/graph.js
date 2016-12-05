@@ -112,7 +112,7 @@ databaseRef.on('value', function (snapshot) {
       var tableTechnique = '';
       var tableWorkflow = '';
       d.info.forEach(function (value, index, array) {
-        if (value.label == 0) {
+        if (value.label == 1) {
           tableMotivation +=
             '<tr class="striped--light-gray">' +
             '<td class="pv2 ph3">Similar Motivation</td>' +
@@ -120,9 +120,8 @@ databaseRef.on('value', function (snapshot) {
             '<td class="pv2 ph3">' + value.plus + '</td>' +
             '<td class="pv2 ph3">' + value.minus + '</td>' +
             '</tr>'
-
         }
-        if (value.label == 1) {
+        if (value.label == 2) {
           tableTechnique +=
             '<tr class="striped--light-gray">' +
             '<td class="pv2 ph3">Similar Technique</td>' +
@@ -131,7 +130,7 @@ databaseRef.on('value', function (snapshot) {
             '<td class="pv2 ph3">' + value.minus + '</td>' +
             '</tr>'
         }
-        if (value.label == 2) {
+        if (value.label == 3) {
           tableWorkflow +=
             '<tr class="striped--light-gray">' +
             '<td class="pv2 ph3">Similar Workflow</td>' +
@@ -142,41 +141,15 @@ databaseRef.on('value', function (snapshot) {
         }
       });
       document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
-        '<table class="collapse ba br2 b--black-10 pv2 ph3">' +
-        '<tbody id="tableContent">' +
+        '<table id="tableContent" class="collapse ba br2 b--black-10 pv2 ph3">' +
+        '<tbody>' +
         '<tr class="striped--light-gray">' +
         '<th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>' +
         '<th class="pv2 ph3 tl f6 fw6 ttu">Description</th>' +
         '<th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>' +
         '<th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>' +
         '</tr>' +
-        tableMotivation +
-        '</tbody>' +
-        '</table>'
-      );
-      document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
-        '<table class="collapse ba br2 b--black-10 pv2 ph3">' +
-        '<tbody id="tableContent">' +
-        '<tr class="striped--light-gray">' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Description</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>' +
-        '</tr>' +
-        tableTechnique +
-        '</tbody>' +
-        '</table>'
-      );
-      document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
-        '<table class="collapse ba br2 b--black-10 pv2 ph3">' +
-        '<tbody id="tableContent">' +
-        '<tr class="striped--light-gray">' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Description</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>' +
-        '</tr>' +
-        tableWorkflow +
+        tableMotivation + tableTechnique + tableWorkflow +
         '</tbody>' +
         '</table>'
       );
