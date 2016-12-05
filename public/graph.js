@@ -76,69 +76,63 @@ databaseRef.on('value', function (snapshot) {
   var filteredEdges = [];
   var searchResult = document.getElementById('search-result');
   var result = getJsonFromUrl();
-  // 'name': item,
-  // 'author': data['authors'][index]
-  console.log(edges);
+
   filteredNodes.push({
-    'orig_idx': parseInt(result.pid),
-    'name': data['nodes'][result.pid],
-    'author': data['authors'][result.pid],
-    'weight': 1
+    'orig_idx': Number(result.pid),
+    'name': nodes[Number(result.pid)].name,
+    'author': nodes[Number(result.pid)].author,
   });
-  edges.forEach(function (value, index, array) {
-    if (value.source == result.pid) {
-      console.log(value);
+
+  var i = 1;
+  edges.forEach(function (value) {
+    if (value['source'] == result.pid) {
       filteredEdges.push({
-        'source': value.source,
-        'target': value.target,
-        'info': value.info
+        source: 0,
+        target: i,
+        info: value.info
       });
       filteredNodes.push({
         'orig_idx': value.target,
-        'name': data['nodes'][value.target],
-        'author': data['authors'][value.target],
-        'weight': 1
+        'name': nodes[Number(value['target'])].name,
+        'author': nodes[Number(value['target'])].author
       });
+      i++;
     }
-    else if (value.target == result.pid) {
+    else if (value['target'] == result.pid) {
       filteredEdges.push({
-        'source': value.source,
-        'target': value.target,
-        'info': value.info
+        source: i,
+        target: 0,
+        info: value.info
       });
       filteredNodes.push({
         'orig_idx': value.source,
-        'name': data['nodes'][value.source],
-        'author': data['authors'][value.source],
-        'weight': 1
+        'name': nodes[Number(value['source'])].name,
+        'author': nodes[Number(value['source'])].author
       });
+      i++;
     }
   });
-  console.log(nodes);
-  console.log(filteredEdges);
+
   var dataset = {
     'nodes': filteredNodes,
     'edges': filteredEdges
   };
 
-  // var pid = dataset['nodes'][result.pid];
-
   var paper1 = document.getElementById('paper1');
   var paper2 = document.getElementById('paper2');
 
-  for (var i = 0; i < filteredNodes.length; i++) {
-    paper1.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + filteredNodes[i].name + '</option>');
-    paper2.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + filteredNodes[i].name + '</option>');
+  for (var i = 0; i < nodes.length; i++) {
+    paper1.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
+    paper2.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
   }
 
   var force = d3.layout.force()
     .size([w, h])
     .linkDistance([linkDistance])
     .charge([-700]);
-    /*
-    .theta(0.1)
-    .gravity(0.05);
-    */
+    // .theta(0.1)
+    // .gravity(0.05);
+
   var edges = svg.selectAll("line")
     .data(dataset.edges)
     .enter()
@@ -220,12 +214,12 @@ databaseRef.on('value', function (snapshot) {
     .attr("class", "dim")
     .on('mouseover', function (d) {
       document.body.style.cursor = 'pointer';
-      d3.select(d3.selectAll("text")[0][d.orig_idx]).style("visibility", "visible");
+      d3.select(d3.selectAll("text")[0][d.index]).style("visibility", "visible");
     })
     .on('mouseout', function (d) {
       document.body.style.cursor = 'default';
       if (d.orig_idx != result.pid) {
-        d3.select(d3.selectAll("text")[0][d.orig_idx]).style("visibility", "hidden");
+        d3.select(d3.selectAll("text")[0][d.index]).style("visibility", "hidden");
       }
     })
     .on('click', function (d, i) {
@@ -303,12 +297,12 @@ databaseRef.on('value', function (snapshot) {
     })
     .style("pointer-events", "none");
 
-
   force
     .nodes(dataset.nodes)
     .links(dataset.edges)
     .on("tick", tick)
     .start();
+
 
   svg.append('defs').append('marker')
     .attr({
@@ -328,7 +322,6 @@ databaseRef.on('value', function (snapshot) {
     .attr('stroke', '#ccc');
 
 
-
   function tick() {
     nodes.attr("cx", function (d) {
         if (d.orig_idx == result.pid) {
@@ -345,6 +338,7 @@ databaseRef.on('value', function (snapshot) {
         }
       });
 
+
     edges.attr({
       "x1": function (d) {
         return d.source.x;
@@ -360,20 +354,18 @@ databaseRef.on('value', function (snapshot) {
       }
     });
 
-    nodelabels.attr("x", function (d) {
-        return d.x;
-      })
-      .attr("y", function (d) {
-        if (d.orig_idx == result.pid) {
-          return d.y - 20;
-        } else {
-          return d.y - 10;
-        }
-      });
+
+    nodelabels.attr("x", function (d) { return d.x; })
+              .attr("y", function (d) {
+                if (d.orig_idx == result.pid) {
+                  return d.y - 20;
+                } else {
+                  return d.y - 10;
+                }
+              });
 
     edgepaths.attr('d', function (d) {
       var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
-      //console.log(d)
       return path
     });
 
@@ -387,6 +379,7 @@ databaseRef.on('value', function (snapshot) {
         return 'rotate(0)';
       }
     });
+
   }
 
   not_first = true;
