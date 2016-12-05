@@ -199,7 +199,13 @@ databaseRef.on('value', function (snapshot) {
     });
 
     nodelabels.attr("x", function (d) { return d.x; })
-      .attr("y", function (d) { return d.y - 10; });
+      .attr("y", function (d) {
+        if (d.index == result.pid) {
+          return d.y - 20;
+        } else {
+          return d.y - 10;
+        }
+      });
 
     edgepaths.attr('d', function (d) {
       var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
