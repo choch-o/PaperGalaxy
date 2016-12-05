@@ -192,12 +192,34 @@ databaseRef.on('value', function (snapshot) {
           updates['/connections/' + value.key + '/plus'] = value.plus + 1;
           database.ref().update(updates);
           document.getElementById('plus' + random + index).innerText = '+' + (value.plus + 1);
+          var score;
+          database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+            if (snapshot.val() == undefined) {
+              score = 0;
+            } else {
+              score = snapshot.val();
+            }
+          });
+          updates = {};
+          updates['users/' + value.uid + '/score'] = score + 10;
+          database.ref().update(updates);
         });
         document.getElementById('minus' + random + index).addEventListener('click', function () {
           var updates = {};
           updates['/connections/' + value.key + '/minus'] = value.minus + 1;
           database.ref().update(updates);
           document.getElementById('minus' + random + index).innerText = '-' + (value.minus + 1);
+          var score;
+          database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+            if (snapshot.val() == undefined) {
+              score = 0;
+            } else {
+              score = snapshot.val();
+            }
+          });
+          updates = {};
+          updates['users/' + value.uid + '/score'] = score - 10;
+          database.ref().update(updates);
         });
       })
       document.getElementById("modal-show-connection").classList.remove('dn');
@@ -280,26 +302,26 @@ databaseRef.on('value', function (snapshot) {
     .text(function (d) {
       return d.label
     });
-/*
-  var edgepaths = svg.selectAll(".edgepath")
-    .data(dataset.edges)
-    .enter()
-    .append('path')
-    .attr({
-      'd': function (d) {
-        return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
-      },
-      'class': 'edgepath',
-      'fill-opacity': 0,
-      'stroke-opacity': 0,
-      'fill': 'blue',
-      'stroke': 'red',
-      'id': function (d, i) {
-        return 'edgepath' + i
-      }
-    })
-    .style("pointer-events", "none");
-*/
+  /*
+    var edgepaths = svg.selectAll(".edgepath")
+      .data(dataset.edges)
+      .enter()
+      .append('path')
+      .attr({
+        'd': function (d) {
+          return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
+        },
+        'class': 'edgepath',
+        'fill-opacity': 0,
+        'stroke-opacity': 0,
+        'fill': 'blue',
+        'stroke': 'red',
+        'id': function (d, i) {
+          return 'edgepath' + i
+        }
+      })
+      .style("pointer-events", "none");
+  */
   force
     .nodes(dataset.nodes)
     .links(dataset.edges)
@@ -368,12 +390,12 @@ databaseRef.on('value', function (snapshot) {
           return d.y - 10;
         }
       });
-/*
-    edgepaths.attr('d', function (d) {
-      var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
-      return path
-    });
-*/
+    /*
+        edgepaths.attr('d', function (d) {
+          var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
+          return path
+        });
+    */
     edgelabels.attr('transform', function (d, i) {
       if (d.target.x < d.source.x) {
         bbox = this.getBBox();

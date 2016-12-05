@@ -90,6 +90,17 @@ buttonSendNewPaper.addEventListener('click', function () {
         'name': document.getElementById('paper-title').value,
         'author': document.getElementById('paper-author').value
       });
+      var score;
+      database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+        if (snapshot.val() == undefined) {
+          score = 0;
+        } else {
+          score = snapshot.val();
+        }
+      });
+      updates = {};
+      updates['users/' + value.uid + '/score'] = score + 30;
+      database.ref().update(updates);
     }
     modalAddPaper.classList.add('dn');
 
@@ -129,6 +140,17 @@ buttonSendNewConnection.addEventListener('click', function () {
       'relationship': Number(relationship.value),
       'description': description.value,
     });
+    var score;
+    database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+      if (snapshot.val() == undefined) {
+        score = 0;
+      } else {
+        score = snapshot.val();
+      }
+    });
+    updates = {};
+    updates['users/' + value.uid + '/score'] = score + 50;
+    database.ref().update(updates);
   }
   modalAddConnection.classList.add('dn');
 });
