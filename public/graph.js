@@ -9,8 +9,16 @@ var svg = d3.select("#graph").append("svg").attr({
   "width": w,
   "height": h
 });
+var not_first = false;
 
 databaseRef.on('value', function (snapshot) {
+  if (not_first) {
+    d3.select("svg").remove();
+    svg = d3.select("#graph").append("svg").attr({
+      "width": w,
+      "height": h
+    });
+  }
   var nodes = [];
   var edges = [];
   var data = snapshot.val();
@@ -23,6 +31,7 @@ databaseRef.on('value', function (snapshot) {
   for (var key in data['connections']) {
     var inserted = false;
     var item = data['connections'][key];
+
     edges.forEach(function (value, index, array) {
       if (value.source == item['paper1'] && value.target == item['paper2']) {
         inserted = true;
@@ -47,6 +56,7 @@ databaseRef.on('value', function (snapshot) {
         });
       }
     });
+
     if (!inserted) {
       edges.push({
         'source': item['paper1'],
@@ -61,24 +71,64 @@ databaseRef.on('value', function (snapshot) {
         }],
       });
     }
-
   }
-  console.log(edges);
-  var dataset = {
-    'nodes': nodes,
-    'edges': edges
-  };
-
+  var filteredNodes = [];
+  var filteredEdges = [];
   var searchResult = document.getElementById('search-result');
   var result = getJsonFromUrl();
-  var pid = dataset['nodes'][result.pid];
+  // 'name': item,
+  // 'author': data['authors'][index]
+  console.log(edges);
+  filteredNodes.push({
+    'orig_idx': parseInt(result.pid),
+    'name': data['nodes'][result.pid],
+    'author': data['authors'][result.pid],
+    'weight': 1
+  });
+  edges.forEach(function (value, index, array) {
+    if (value.source == result.pid) {
+      console.log(value);
+      filteredEdges.push({
+        'source': value.source,
+        'target': value.target,
+        'info': value.info
+      });
+      filteredNodes.push({
+        'orig_idx': value.target,
+        'name': data['nodes'][value.target],
+        'author': data['authors'][value.target],
+        'weight': 1
+      });
+    }
+    else if (value.target == result.pid) {
+      filteredEdges.push({
+        'source': value.source,
+        'target': value.target,
+        'info': value.info
+      });
+      filteredNodes.push({
+        'orig_idx': value.source,
+        'name': data['nodes'][value.source],
+        'author': data['authors'][value.source],
+        'weight': 1
+      });
+    }
+  });
+  console.log(nodes);
+  console.log(filteredEdges);
+  var dataset = {
+    'nodes': filteredNodes,
+    'edges': filteredEdges
+  };
+
+  // var pid = dataset['nodes'][result.pid];
 
   var paper1 = document.getElementById('paper1');
   var paper2 = document.getElementById('paper2');
 
-  for (var i = 0; i < nodes.length; i++) {
-    paper1.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
-    paper2.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
+  for (var i = 0; i < filteredNodes.length; i++) {
+    paper1.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + filteredNodes[i].name + '</option>');
+    paper2.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + filteredNodes[i].name + '</option>');
   }
 
   var force = d3.layout.force()
@@ -160,8 +210,8 @@ databaseRef.on('value', function (snapshot) {
     .data(dataset.nodes)
     .enter()
     .append("circle")
-    .attr("r", function (d, i) {
-      if (i == result.pid) {
+    .attr("r", function (d) {
+      if (d.orig_idx == result.pid) {
         return 15;
       } else {
         return radius - .75;
@@ -170,12 +220,12 @@ databaseRef.on('value', function (snapshot) {
     .attr("class", "dim")
     .on('mouseover', function (d) {
       document.body.style.cursor = 'pointer';
-      d3.select(d3.selectAll("text")[0][d.index]).style("visibility", "visible");
+      d3.select(d3.selectAll("text")[0][d.orig_idx]).style("visibility", "visible");
     })
     .on('mouseout', function (d) {
       document.body.style.cursor = 'default';
-      if (d.index != result.pid) {
-        d3.select(d3.selectAll("text")[0][d.index]).style("visibility", "hidden");
+      if (d.orig_idx != result.pid) {
+        d3.select(d3.selectAll("text")[0][d.orig_idx]).style("visibility", "hidden");
       }
     })
     .on('click', function (d, i) {
@@ -198,8 +248,8 @@ databaseRef.on('value', function (snapshot) {
     .style("text-anchor", "middle")
     .style("font-size", 12)
     .attr({
-      'visibility': function (d, i) {
-        if (i == result.pid) {
+      'visibility': function (d) {
+        if (d.orig_idx == result.pid) {
           return "visible"
         } else {
           return "hidden"
@@ -281,14 +331,14 @@ databaseRef.on('value', function (snapshot) {
 
   function tick() {
     nodes.attr("cx", function (d) {
-        if (d.index == result.pid) {
+        if (d.orig_idx == result.pid) {
           return d.x = w / 2;
         } else {
           return d.x = Math.max(radius + 200, Math.min(w - radius - 200, d.x));
         }
       })
       .attr("cy", function (d) {
-        if (d.index == result.pid) {
+        if (d.orig_idx == result.pid) {
           return d.y = h / 2;
         } else {
           return d.y = Math.max(radius + 10, Math.min(h - radius, d.y));
@@ -314,7 +364,7 @@ databaseRef.on('value', function (snapshot) {
         return d.x;
       })
       .attr("y", function (d) {
-        if (d.index == result.pid) {
+        if (d.orig_idx == result.pid) {
           return d.y - 20;
         } else {
           return d.y - 10;
@@ -339,6 +389,7 @@ databaseRef.on('value', function (snapshot) {
     });
   }
 
+  not_first = true;
 
 });
 
