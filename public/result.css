@@ -4,10 +4,13 @@
   text-align: center;
 }
 
-.nodelabel {
-  display: none;
+#search-box {
+  width: 200px;
+  height: 30px;
+  padding: 10px;
+  font-size: 12px;
 }
 
-.nodelabel:hover {
-  display: inline;
+#search-button {
+  vertical-align: middle;
 }

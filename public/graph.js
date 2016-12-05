@@ -80,14 +80,14 @@ databaseRef.on('value', function (snapshot) {
     paper1.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
     paper2.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
   }
-  /*
-      var force = d3.layout.force()
-        .size([w, h])
-        .linkDistance([linkDistance])
-        .charge([-700]);
-        /*
-        .theta(0.1)
-        .gravity(0.05);
+
+  var force = d3.layout.force()
+    .size([w, h])
+    .linkDistance([linkDistance])
+    .charge([-700]);
+    /*
+    .theta(0.1)
+    .gravity(0.05);
     */
   var edges = svg.selectAll("line")
     .data(dataset.edges)

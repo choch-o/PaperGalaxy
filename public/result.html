@@ -17,26 +17,32 @@
     };
     firebase.initializeApp(config);
     </script>
-  <link rel="stylesheet" href="result.css">
-</head>
+    <link rel="stylesheet" href="result.css">
+  </head>
+  <body>
+    <nav class="db dt-l w-100 border-box pa3 ph5-l">
+      <a class="db dtc-l v-mid mid-gray link dim w-100 w-25-l tc tl-l mb2 mb0-l" href="/" title="Home">
+        <p>PAPERGALAXY</p>
+      </a>
+      <div class="db dtc-l v-mid w-100 w-75-l tc tr-l">
+        <div hidden id="user-pic"></div>
+        <div hidden id="user-name"></div>
+        <form id="search-form" class="f6 f5-l dib mr3 mr4-l" onsubmit="showResults()">
+          <input type="text" id="search-box" list="paper-list" placeholder="Search for papers...">
+          <img src="search_icon.png" id="search-button" class="dib w2 br-100">
+          <!--<input type="button" id="search-button" value="SEARCH" onclick="showResults()">-->
+        </form>
+        <datalist id="paper-list"></datalist>
+        <a class="link dim dark-gray f6 f5-l dib mr3 mr4-l" href="/" title="Home">Home</a>
+        <a id="sign-in" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Login">Login</a>
+        <a hidden id="sign-out" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Logout">Logout</a>
+        <a class="link dim dark-gray f6 f5-l dib" title="Press">Help</a>
+      </div>
+    </nav>
+    <div id="graph"></div>
 
-<body>
-  <nav class="db dt-l w-100 border-box pa3 ph5-l">
-    <a class="db dtc-l v-mid mid-gray link dim w-100 w-25-l tc tl-l mb2 mb0-l" href="/" title="Home">
-      <p>PAPERGALAXY</p>
-    </a>
-    <div class="db dtc-l v-mid w-100 w-75-l tc tr-l">
-      <div hidden id="user-pic"></div>
-      <div hidden id="user-name"></div>
-      <a class="link dim dark-gray f6 f5-l dib mr3 mr4-l" href="/" title="Home">Home</a>
-      <a id="sign-in" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Login">Login</a>
-      <a hidden id="sign-out" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Logout">Logout</a>
-      <a class="link dim dark-gray f6 f5-l dib" title="Press">Help</a>
-    </div>
-  </nav>
-  <div id="graph"></div>
-  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-  <script src="graph-result.js"></script>
-</body>
-
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="search.js"></script>
+    <script src="graph.js"></script>
+  </body>
 </html>
