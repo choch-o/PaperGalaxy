@@ -199,6 +199,8 @@ firebase.database().ref('users').on('value', function (snapshot) {
     board1stName.innerText = scores[0].name;
   board2stName.innerHTML = scores[1].name;
   board2stScore.innerHTML = scores[1].score;
+  board3stName.innerText = scores[2].name;
+  board3stScore.innerText = scores[3].score;
 });
 
 function compare(a, b) {
