@@ -1,11 +1,9 @@
 var user = firebase.auth().currentUser;
-var name, email, photoUrl, uid;
+var name, uid;
 
 if (user != null) {
   name = user.displayName;
   uid = user.uid;
-  console.log(name);
-  console.log(uid);
 
   var database = firebase.database();
   var databaseRef = database.ref('/users');

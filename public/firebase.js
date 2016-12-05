@@ -41,30 +41,6 @@ PrejudiceViewer.prototype.onAuthStateChanged = function (user) {
     this.signOutButton.classList.add('dib');
     this.signInButton.classList.remove('dib');
 
-    var name = user.displayName;
-    var uid = user.uid;
-
-    var database = firebase.database();
-
-    var databaseRef = database.ref('/users');
-    databaseRef.on('value', function (snapshot) {
-      if(snapshot.val()[uid] == undefined) {
-        databaseRef.set({
-          'name': name,
-          'uid': uid,
-          'papers': 0,
-          'connections': 0,
-          score: 0
-        });
-      }
-    });
-    databaseRef.on('value', function (snapshot) {
-      var data = snapshot.val();
-      var score = data[uid];
-      //document.getElementById('dashboardName').innerText = name;
-      //document.getElementById('dashboardScore').innerText = score;
-    });
-
   } else {
     this.userName.classList.add('dn');
     this.signOutButton.classList.add('dn');

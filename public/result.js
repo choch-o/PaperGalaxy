@@ -77,14 +77,22 @@ buttonSendNewPaper.addEventListener('click', function () {
       });
     });
     var user = firebase.auth().currentUser;
+    var name, uid;
+    if (user != null) {
+      name = user.displayName;
+      uid = user.uid;
+    } else {
+      name = "annonymous";
+      uid = 0;
+    }
     if (user) {
-      var name = user.displayName;
-      var uid = user.uid;
-      firebase.database().ref('users/papers').push().set({
+      firebase.database().ref('users/' + uid + '/papers').push().set({
         'name': document.getElementById('paper-title').value,
-        'authors': document.getElementById('paper-author').value,
+        'author': document.getElementById('paper-author').value
       });
     }
+    modalAddPaper.classList.add('dn');
+
   }
 });
 
@@ -115,7 +123,7 @@ buttonSendNewConnection.addEventListener('click', function () {
     'minus': 0
   });
   if (user) {
-    firebase.database().ref('users/connections').push().set({
+    firebase.database().ref('users/' + uid + '/connections').push().set({
       'paper1': Number(paper1.value),
       'paper2': Number(paper2.value),
       'relationship': Number(relationship.value),
