@@ -76,6 +76,15 @@ buttonSendNewPaper.addEventListener('click', function () {
         authors
       });
     });
+    var user = firebase.auth().currentUser;
+    if (user) {
+      var name = user.displayName;
+      var uid = user.uid;
+      firebase.database().ref('users/papers').push().set({
+        'name': document.getElementById('paper-title').value,
+        'authors': document.getElementById('paper-author').value,
+      });
+    }
   }
 });
 
@@ -105,6 +114,14 @@ buttonSendNewConnection.addEventListener('click', function () {
     'plus': 0,
     'minus': 0
   });
+  if (user) {
+    firebase.database().ref('users/connections').push().set({
+      'paper1': Number(paper1.value),
+      'paper2': Number(paper2.value),
+      'relationship': Number(relationship.value),
+      'description': description.value,
+    });
+  }
   modalAddConnection.classList.add('dn');
 });
 
