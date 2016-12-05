@@ -30,41 +30,56 @@ PrejudiceViewer.prototype.signOut = function () {
 }
 
 PrejudiceViewer.prototype.onAuthStateChanged = function (user) {
-  if (user) {
-    var profilePicUrl = user.photoURL;
-    var userName = user.displayName;
+    if (user) {
+      var profilePicUrl = user.photoURL;
+      var userName = user.displayName;
 
-    this.userPic.style.backgroundImage = 'url(' + profilePicUrl + ')';
-    this.userName.textContent = userName;
+      this.userPic.style.backgroundImage = 'url(' + profilePicUrl + ')';
+      this.userName.textContent = userName;
 
-    this.userName.removeAttribute('hidden');
-    this.userPic.removeAttribute('hidden');
-    this.signOutButton.removeAttribute('hidden');
+      this.userName.removeAttribute('hidden');
+      this.userPic.removeAttribute('hidden');
+      this.signOutButton.removeAttribute('hidden');
 
-    this.signInButton.setAttribute('hidden', 'true');
-  } else {
-    this.userName.setAttribute('hidden', 'true');
-    this.userPic.setAttribute('hidden', 'true');
-    this.signOutButton.setAttribute('hidden', 'true');
+      this.signInButton.setAttribute('hidden', 'true');
 
-    this.signInButton.removeAttribute('hidden');
+      var name = user.displayName;
+      var uid = user.uid;
+      console.log(name);
+      console.log(uid);
 
+      var database = firebase.database();
+      var databaseRef = database.ref('/users');
+      databaseRef.on('value', function (snapshot) {
+        var data = snapshot.val();
+        var score = data[uid];
+        document.getElementById('dashboardName').innerText = name;
+        document.getElementById('dashboardScore').innerText = score;
+      });
+
+    } else {
+      this.userName.setAttribute('hidden', 'true');
+      this.userPic.setAttribute('hidden', 'true');
+      this.signOutButton.setAttribute('hidden', 'true');
+
+      this.signInButton.removeAttribute('hidden');
+
+    }
   }
-}
-/*
-PrejudiceViewer.prototype.checkSignedInWithMessage = function () {
-  if (this.auth.currentUser) {
-    return true;
-  }
+  /*
+  PrejudiceViewer.prototype.checkSignedInWithMessage = function () {
+    if (this.auth.currentUser) {
+      return true;
+    }
 
-  var data = {
-    message: 'You must sign-in first',
-    timeout: 2000
-  };
-  this.signInSnackbar.MaterialSnackbar.showSnackbar(data);
-  return false;
-}
-*/
-window.onload = function() {
+    var data = {
+      message: 'You must sign-in first',
+      timeout: 2000
+    };
+    this.signInSnackbar.MaterialSnackbar.showSnackbar(data);
+    return false;
+  }
+  */
+window.onload = function () {
   window.prejudiceViewer = new PrejudiceViewer();
 }

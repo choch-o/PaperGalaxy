@@ -4,20 +4,38 @@ var linkDistance = 200;
 var colors = d3.scale.category10();
 var database = firebase.database();
 var databaseRef = database.ref();
-var svg = d3.select("#graph").append("svg").attr({ "width": w, "height": h });
+var svg = d3.select("#graph").append("svg").attr({
+  "width": w,
+  "height": h
+});
 
 databaseRef.on('value', function (snapshot) {
   var nodes = [];
   var edges = [];
   var data = snapshot.val();
   data['nodes'].forEach(function (item, index, array) {
-    nodes.push({ 'name': item, 'author': data['authors'][index] });
+    nodes.push({
+      'name': item,
+      'author': data['authors'][index]
+    });
   });
-  data['source'].forEach(function (item, index, array) {
-    edges.push({ 'source': item, 'target': data['target'][index], 'label': data['labels'][index] });
-  });
-
-  var dataset = { 'nodes': nodes, 'edges': edges };
+  for (var key in data['connections']) {
+    var item = data['connections'][key];
+    edges.push({
+      'source': item['paper1'],
+      'target': item['paper2'],
+      'label': item['relationship'],
+      'description': item['description'],
+      'name': item['name'],
+      'uid': item['uid'],
+      'plus': item['plus'],
+      'minus': item['minus']
+    });
+  }
+  var dataset = {
+    'nodes': nodes,
+    'edges': edges
+  };
 
   var paper1 = document.getElementById('paper1');
   var paper2 = document.getElementById('paper2');
@@ -26,12 +44,6 @@ databaseRef.on('value', function (snapshot) {
     paper1.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
     paper2.insertAdjacentHTML('beforeend', '<option value="' + i + '">' + nodes[i].name + '</option>');
   }
-  /*
-  $(document).ready(function () {
-    $('select').material_select();
-  });
-*/
-
 
   var force = d3.layout.force()
     .nodes(dataset.nodes)
@@ -48,16 +60,35 @@ databaseRef.on('value', function (snapshot) {
     .enter()
     .append("line")
     .attr("class", "dim")
-    .attr("id", function (d, i) { return 'edge' + i })
+    .attr("id", function (d, i) {
+      return 'edge' + i
+    })
     .attr('marker-end', 'url(#arrowhead)')
     .style("stroke", "#ccc")
-    .style("pointer-events", "none");
+    .on('mouseenter', function (d) {
+      document.body.style.cursor = 'pointer';
+    })
+    .on('mouseleave', function (d) {
+      document.body.style.cursor = 'default';
+    })
+    .on('click', function (d, i) {
+      document.getElementById('tableContent').insertAdjacentHTML('beforeend',
+        '<tr class="striped--light-gray">' +
+        '<td class="pv2 ph3">' + d.label + '</td>' +
+        '<td class="pv2 ph3">' + d.description + '</td>' +
+        '<td class="pv2 ph3">' + d.plus + '</td>' +
+        '<td class="pv2 ph3">' + d.minus + '</td>' +
+        '</tr>');
+      document.getElementById("modal-show-connection").classList.remove('dn');
+    });
 
   var nodes = svg.selectAll("circle")
     .data(dataset.nodes)
     .enter()
     .append("circle")
-    .attr({ "r": 15 })
+    .attr({
+      "r": 15
+    })
     .attr("class", "dim")
     .on('mouseenter', function (d) {
       document.body.style.cursor = 'pointer';
@@ -65,18 +96,14 @@ databaseRef.on('value', function (snapshot) {
     .on('mouseleave', function (d) {
       document.body.style.cursor = 'default';
     })
-    .on('click', function (d) {
-      //console.log('hello');
-      /*
-      $(document).ready(function () {
-        document.getElementById("paperInfoTitle").insertAdjacentHTML('afterend', '<p>' + d.name + '</p>');
-        document.getElementById("paperInfoAuthor").insertAdjacentHTML('afterend', '<p>' + d.author + '</p>');
-        $('.modal').modal();
-        $('#modal-show-connection').modal('open');
-      });
-      */
+    .on('click', function (d, i) {
+      document.getElementById("paperInfoTitle").insertAdjacentHTML('afterend', '<p>' + d.name + '</p>');
+      document.getElementById("paperInfoAuthor").insertAdjacentHTML('afterend', '<p>' + d.author + '</p>');
+      document.getElementById("modal-show-paper").classList.remove('dn');
     })
-    .style("fill", function (d, i) { return colors(i); })
+    .style("fill", function (d, i) {
+      return colors(i);
+    })
     .call(force.drag)
 
 
@@ -85,25 +112,35 @@ databaseRef.on('value', function (snapshot) {
     .enter()
     .append("text")
     .attr({
-      "x": function (d) { return d.x; },
-      "y": function (d) { return d.y; },
+      "x": function (d) {
+        return d.x;
+      },
+      "y": function (d) {
+        return d.y;
+      },
       "class": "nodelabel",
       "stroke": "black"
     })
-    .text(function (d) { return d.name; });
+    .text(function (d) {
+      return d.name;
+    })
 
   var edgepaths = svg.selectAll(".edgepath")
     .data(dataset.edges)
     .enter()
     .append('path')
     .attr({
-      'd': function (d) { return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y },
+      'd': function (d) {
+        return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
+      },
       'class': 'edgepath',
       'fill-opacity': 0,
       'stroke-opacity': 0,
       'fill': 'blue',
       'stroke': 'red',
-      'id': function (d, i) { return 'edgepath' + i }
+      'id': function (d, i) {
+        return 'edgepath' + i
+      }
     })
     .style("pointer-events", "none");
 
@@ -114,7 +151,9 @@ databaseRef.on('value', function (snapshot) {
     .style("pointer-events", "none")
     .attr({
       'class': 'edgelabel',
-      'id': function (d, i) { return 'edgelabel' + i },
+      'id': function (d, i) {
+        return 'edgelabel' + i
+      },
       'dx': 80,
       'dy': 0,
       'font-size': 10,
@@ -122,9 +161,13 @@ databaseRef.on('value', function (snapshot) {
     });
 
   edgelabels.append('textPath')
-    .attr('xlink:href', function (d, i) { return '#edgepath' + i })
+    .attr('xlink:href', function (d, i) {
+      return '#edgepath' + i
+    })
     .style("pointer-events", "none")
-    .text(function (d) { return d.label });
+    .text(function (d) {
+      return d.label
+    });
 
 
   svg.append('defs').append('marker')
@@ -148,19 +191,35 @@ databaseRef.on('value', function (snapshot) {
   force.on("tick", function () {
 
     edges.attr({
-      "x1": function (d) { return d.source.x; },
-      "y1": function (d) { return d.source.y; },
-      "x2": function (d) { return d.target.x; },
-      "y2": function (d) { return d.target.y; }
+      "x1": function (d) {
+        return d.source.x;
+      },
+      "y1": function (d) {
+        return d.source.y;
+      },
+      "x2": function (d) {
+        return d.target.x;
+      },
+      "y2": function (d) {
+        return d.target.y;
+      }
     });
 
     nodes.attr({
-      "cx": function (d) { return d.x; },
-      "cy": function (d) { return d.y; }
+      "cx": function (d) {
+        return d.x;
+      },
+      "cy": function (d) {
+        return d.y;
+      }
     });
 
-    nodelabels.attr("x", function (d) { return d.x; })
-      .attr("y", function (d) { return d.y; });
+    nodelabels.attr("x", function (d) {
+        return d.x;
+      })
+      .attr("y", function (d) {
+        return d.y;
+      });
 
     edgepaths.attr('d', function (d) {
       var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
@@ -174,8 +233,7 @@ databaseRef.on('value', function (snapshot) {
         rx = bbox.x + bbox.width / 2;
         ry = bbox.y + bbox.height / 2;
         return 'rotate(180 ' + rx + ' ' + ry + ')';
-      }
-      else {
+      } else {
         return 'rotate(0)';
       }
     });

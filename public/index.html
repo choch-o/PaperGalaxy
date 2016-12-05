@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="https://unpkg.com/tachyons@4.5.5/css/tachyons.min.css" />
@@ -27,9 +28,10 @@
     <div class="db dtc-l v-mid w-100 w-75-l tc tr-l">
       <div hidden id="user-pic"></div>
       <div hidden id="user-name"></div>
-      <a class="link dim dark-gray f6 f5-l dib mr3 mr4-l" href="#" title="Home">Home</a>
+      <a id="toIndex" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" href="#" title="Home">Home</a>
       <a id="sign-in" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Login">Login</a>
-      <a hidden id="sign-out" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Logout">Logout</a>
+      <a id="sign-out" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Logout">Logout</a>
+      <a id="toDashboard" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Dashboard">Dashboard</a>
       <a class="link dim dark-gray f6 f5-l dib" title="Press">Help</a>
     </div>
   </nav>
@@ -49,8 +51,8 @@
     <div id="index">
       <div id="welcome" align="center">
         <h5>If this is your first time, please visit the 'help' section</h5>
-        <a id="moveToGraph" class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue">Graph</a>
-        <a class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue">Score</a>
+        <a id="toGraph" class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue">Graph</a>
+        <a id="toScore" class="f6 link dim br-pill ba bw2 ph3 pv2 mb2 dib dark-blue">Score</a>
       </div>
       <div id="graph-index"></div>
     </div>
@@ -71,51 +73,67 @@
           <h5>Author</h5>
           <div class="cf">
             <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
-              type="text" name="Email_Adress" value="" id="paper-author">
+              type="text" value="" id="paper-author">
           </div>
-          <a class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">SEND</a>
+          <a id="sendNewPaper" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">SEND</a>
         </div>
       </div>
       <div id="modal-add-connection" class="modal dn">
         <div class="modal-content">
           <h4>Create a new edge</h4>
           <h5>Paper1</h5>
-          <div class="input-field">
-            <select id="paper1">
+          <select id="paper1">
           <option value="0" disabled selected>Choose first paper</option>
-        </select>
-          </div>
+          </select>
           <h5>Paper2</h5>
-          <div class="input-field">
-            <select id="paper2">
+          <select id="paper2">
           <option value="0" disabled selected>Choose second paper</option>
-        </select>
-          </div>
+          </select>
           <h5>Relationship</h5>
-          <div class="input-field">
-            <select id="relationship">
+          <select id="relationship">
           <option value="0" disabled selected>Choose relationship</option>
           <option value="1">Similar motivation</option>
           <option value="2">Similar technique</option>
           <option value="3">Similar workflow</option>
-        </select>
+          </select>
+          <h5>Description</h5>
+          <div class="cf">
+            <input class="f6 f5-l input-reset bn fl black-80 bg-white pa3 lh-solid w-100 w-75-m w-80-l br2-ns br--left-ns" placeholder="type"
+              type="text" value="" id="connection-description">
           </div>
-        </div>
-        <div class="modal-footer">
-          <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">SEND</a>
+          <a id="sendNewConnection" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">SEND</a>
         </div>
       </div>
-      <div id="modal-show-connection" class="modal dn">
+      <div id="modal-show-paper" class="modal dn">
         <div class="modal-content">
           <h4>Paper Information</h4>
           <h5 id="paperInfoTitle">Title</h5>
           <h5 id="paperInfoAuthor">Author</h5>
-        </div>
-        <div class="modal-footer">
-          <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">CLOSE</a>
+          <a id="closeModalPaper" class="f6 link dim br-100 ba bw2 ph3 pv2 mb2 dib dark-blue">CLOSE</a>
         </div>
       </div>
-      <div id="graph"></div>
+      <div id="modal-show-connection" class="modal dn">
+        <div class="modal-content">
+          <table id="tableConnection" class="collapse ba br2 b--black-10 pv2 ph3">
+            <tbody id="tableContent">
+              <tr class="striped--light-gray">
+                <th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>
+                <th class="pv2 ph3 tl f6 fw6 ttu">Description</th>
+                <th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>
+                <th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="graph">
+      </div>
+    </div>
+    <div class="dn" id="dashboard">
+      <h4 id="dashboardName"></h4>
+      <h4 id="dashboardScore"></h4>
+    </div>
+    <div class="dn" id="score">
     </div>
   </main>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
