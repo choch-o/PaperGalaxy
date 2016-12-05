@@ -37,16 +37,17 @@ PrejudiceViewer.prototype.onAuthStateChanged = function (user) {
       this.userPic.style.backgroundImage = 'url(' + profilePicUrl + ')';
       this.userName.textContent = userName;
 
-      this.userName.removeAttribute('hidden');
-      this.userPic.removeAttribute('hidden');
-      this.signOutButton.removeAttribute('hidden');
-
-      this.signInButton.setAttribute('hidden', 'true');
+      this.userName.classList.remove('dn');
+      this.userPic.classList.remove('dn');
+      this.signOutButton.classList.remove('dn');
+      this.signInButton.classList.add('dn');
+      this.userName.classList.add('dib');
+      this.userPic.classList.add('dib');
+      this.signOutButton.classList.add('dib');
+      this.signInButton.classList.remove('dib');
 
       var name = user.displayName;
       var uid = user.uid;
-      console.log(name);
-      console.log(uid);
 
       var database = firebase.database();
       var databaseRef = database.ref('/users');
@@ -58,11 +59,14 @@ PrejudiceViewer.prototype.onAuthStateChanged = function (user) {
       });
 
     } else {
-      this.userName.setAttribute('hidden', 'true');
-      this.userPic.setAttribute('hidden', 'true');
-      this.signOutButton.setAttribute('hidden', 'true');
-
-      this.signInButton.removeAttribute('hidden');
+      this.userName.classList.add('dn');
+      this.userPic.classList.add('dn');
+      this.signOutButton.classList.add('dn');
+      this.signInButton.classList.remove('dn');
+      this.userName.classList.remove('dib');
+      this.userPic.classList.remove('dib');
+      this.signOutButton.classList.remove('dib');
+      this.signInButton.classList.add('dib');
 
     }
   }
