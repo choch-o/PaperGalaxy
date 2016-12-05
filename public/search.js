@@ -3,10 +3,12 @@ var databaseRef = database.ref();
 
 var searchInput = document.getElementById('search-box');
 var paperList = document.getElementById("paper-list");
+
+var data;
 // database에 변화가 생길 때마다(data가 새로 들어올 때마다) 불리는 함수
 databaseRef.on('value', function (snapshot) {
   var nodes = [];
-  var data = snapshot.val();
+  data = snapshot.val();
   data['nodes'].forEach(function (item, index, array) {
     nodes.push({
       'name': item,
@@ -25,7 +27,12 @@ databaseRef.on('value', function (snapshot) {
 });
 
 // Declare variables
+
 var searchButton = document.getElementById('search-button');
 searchButton.onclick = function() {
-  console.log(searchInput.value);
+  console.log("INDEX");
+  console.log(data['nodes']);
+  console.log(data['nodes'].indexOf(searchInput.value));
+  window.location = '/result.html?pid='
+      + data['nodes'].indexOf(searchInput.value);
 };

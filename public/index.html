@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="https://unpkg.com/tachyons@4.5.5/css/tachyons.min.css" />
   <link href="https://fonts.googleapis.com/css?family=Roboto|Slabo+27px" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script>
   // Initialize Firebase
   var config = {
@@ -41,7 +42,7 @@
       <div align="center">
         <form id="search-form">
           <input type="text" id="search-box" list="paper-list" placeholder="Search for papers...">
-          <input type="button" id="search-button" value="SEARCH">
+          <input type="button" id="search-button" value="SEARCH" onclick="showResults()">
         </form>
         <datalist id="paper-list"></datalist>
       </div>
@@ -115,7 +116,7 @@
           <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">CLOSE</a>
         </div>
       </div>
-      <div id="graph"></div>
+
     </div>
   </main>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
