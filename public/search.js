@@ -30,9 +30,6 @@ databaseRef.on('value', function (snapshot) {
 
 var searchButton = document.getElementById('search-button');
 searchButton.onclick = function() {
-  console.log("INDEX");
-  console.log(data['nodes']);
-  console.log(data['nodes'].indexOf(searchInput.value));
   window.location = '/result.html?pid='
       + data['nodes'].indexOf(searchInput.value);
 };

@@ -26,6 +26,12 @@
       <div class="db dtc-l v-mid w-100 w-75-l tc tr-l">
         <div hidden id="user-pic"></div>
         <div hidden id="user-name"></div>
+        <form id="search-form" class="f6 f5-l dib mr3 mr4-l" onsubmit="showResults()">
+          <input type="text" id="search-box" list="paper-list" placeholder="Search for papers...">
+          <img src="search_icon.png" id="search-button" class="dib w2 br-100">
+          <!--<input type="button" id="search-button" value="SEARCH" onclick="showResults()">-->
+        </form>
+        <datalist id="paper-list"></datalist>
         <a class="link dim dark-gray f6 f5-l dib mr3 mr4-l" href="/" title="Home">Home</a>
         <a id="sign-in" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Login">Login</a>
         <a hidden id="sign-out" class="link dim dark-gray f6 f5-l dib mr3 mr4-l" title="Logout">Logout</a>
@@ -35,7 +41,7 @@
     <div id="graph"></div>
 
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-
+    <script type="text/javascript" src="search.js"></script>
     <script src="graph.js"></script>
   </body>
 </html>
