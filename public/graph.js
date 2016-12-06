@@ -141,7 +141,22 @@ databaseRef.on('value', function (snapshot) {
     .attr("id", function (d, i) {
       return 'edge' + i
     })
-    .style("stroke", "#ccc")
+    .style("stroke-width", 3)
+    .style("stroke", function (d) {
+      if (d.info.length < 3) {
+        return "#ddd";
+      }
+      else if (d.info.length < 6) {
+        return "#aaa";
+      }
+      else if (d.info.length < 9){
+        return "#888";
+      }
+      else {
+        return "#444";
+      }
+
+    })
     .on('mouseenter', function (d) {
       document.body.style.cursor = 'pointer';
     })

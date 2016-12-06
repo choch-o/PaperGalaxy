@@ -1,6 +1,6 @@
 var w = 1000;
 var h = 600;
-var radius = 10;
+var radius = 5;
 var linkDistance = 50;
 var colors = d3.scale.category10();
 var database = firebase.database();
