@@ -37,6 +37,19 @@ var modalConnection = document.getElementById('modal-show-connection');
 var buttonSendNewPaper = document.getElementById('sendNewPaper');
 var buttonSendNewConnection = document.getElementById('sendNewConnection');
 var buttonCloseModalPaper = document.getElementById('closeModalPaper');
+var board1stName = document.getElementById('1stName');
+var board1stScore = document.getElementById('1stScore');
+var board2stName = document.getElementById('2ndName');
+var board2stScore = document.getElementById('2ndScore');
+var board3stName = document.getElementById('3rdName');
+var board3stScore = document.getElementById('3rdScore');
+var boardupName = document.getElementById('upName');
+var boardupScore = document.getElementById('upScore');
+var boardmyName = document.getElementById('myName');
+var boardmyScore = document.getElementById('myScore');
+var boarddownName = document.getElementById('downName');
+var boarddownScore = document.getElementById('downScore');
+
 
 
 buttonPlus.addEventListener('click', function () {
@@ -90,6 +103,17 @@ buttonSendNewPaper.addEventListener('click', function () {
         'name': document.getElementById('paper-title').value,
         'author': document.getElementById('paper-author').value
       });
+      var score;
+      database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+        if (snapshot.val() == undefined) {
+          score = 0;
+        } else {
+          score = snapshot.val();
+        }
+      });
+      updates = {};
+      updates['users/' + value.uid + '/score'] = score + 30;
+      database.ref().update(updates);
     }
     modalAddPaper.classList.add('dn');
 
@@ -129,6 +153,17 @@ buttonSendNewConnection.addEventListener('click', function () {
       'relationship': Number(relationship.value),
       'description': description.value,
     });
+    var score;
+    database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+      if (snapshot.val() == undefined) {
+        score = 0;
+      } else {
+        score = snapshot.val();
+      }
+    });
+    updates = {};
+    updates['users/' + value.uid + '/score'] = score + 50;
+    database.ref().update(updates);
   }
   modalAddConnection.classList.add('dn');
 });
@@ -145,5 +180,34 @@ window.onclick = function (event) {
   }
   if (event.target == modalPaper) {
     modalPaper.classList.add('dn');
+  }
+}
+
+var scores = [];
+firebase.database().ref('users').on('value', function (snapshot) {
+  var data = snapshot.val();
+  for (var key in data) {
+    scores.push ({
+      score: data[key]['score'],
+      name: data[key]['name']
+    })
+  }
+  scores.sort(compare);
+  console.log(scores);
+
+    board1stScore.innerText = scores[0].score;
+    board1stName.innerText = scores[0].name;
+  board2stName.innerHTML = scores[1].name;
+  board2stScore.innerHTML = scores[1].score;
+  board3stName.innerText = scores[2].name;
+  board3stScore.innerText = scores[3].score;
+});
+
+function compare(a, b) {
+  if (a.score > b.score) {
+    return -1;
+  }
+  else {
+    return 1;
   }
 }
