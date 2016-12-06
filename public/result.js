@@ -1,32 +1,3 @@
-/*
-var database = firebase.database();
-var databaseRef = database.ref();
-var data;
-
-
-databaseRef.on('value', function (snapshot) {
-  var nodes = [];
-  data = snapshot.val();
-  data['nodes'].forEach(function (item, index, array) {
-    nodes.push({
-      'name': item,
-      'author': data['authors'][index]
-    });
-  });
-
-  console.log(data['nodes'][result]);
-}
-function getJsonFromUrl() {
-  var query = location.search.substr(1);
-  var result = {};
-  query.split("&").forEach(function(part) {
-    var item = part.split("=");
-    result[item[0]] = decodeURIComponent(item[1]);
-  });
-  return result;
-}
-*/
-
 var buttonPlus = document.getElementById('fixed-button');
 var buttonAddPaper = document.getElementById('fixed-button-top');
 var buttonAddConnection = document.getElementById('fixed-button-bottom');
@@ -187,7 +158,7 @@ var scores = [];
 firebase.database().ref('users').on('value', function (snapshot) {
   var data = snapshot.val();
   for (var key in data) {
-    scores.push ({
+    scores.push({
       score: data[key]['score'],
       name: data[key]['name']
     })
@@ -195,8 +166,8 @@ firebase.database().ref('users').on('value', function (snapshot) {
   scores.sort(compare);
   console.log(scores);
 
-    board1stScore.innerText = scores[0].score;
-    board1stName.innerText = scores[0].name;
+  board1stScore.innerText = scores[0].score;
+  board1stName.innerText = scores[0].name;
   board2stName.innerHTML = scores[1].name;
   board2stScore.innerHTML = scores[1].score;
   board3stName.innerText = scores[2].name;
@@ -206,8 +177,7 @@ firebase.database().ref('users').on('value', function (snapshot) {
 function compare(a, b) {
   if (a.score > b.score) {
     return -1;
-  }
-  else {
+  } else {
     return 1;
   }
 }

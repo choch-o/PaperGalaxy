@@ -248,8 +248,14 @@ databaseRef.on('value', function (snapshot) {
       }
     })
     .on('click', function (d, i) {
-      document.getElementById("paperInfoTitle").insertAdjacentHTML('afterend', '<p>' + d.name + '</p>');
-      document.getElementById("paperInfoAuthor").insertAdjacentHTML('afterend', '<p>' + d.author + '</p>');
+      if (document.getElementById('paperTitle') != null) {
+        document.getElementById('modal-show-paper-content').removeChild(document.getElementById('paperTitle'));
+      }
+      if (document.getElementById('paperAuthor') != null) {
+        document.getElementById('modal-show-paper-content').removeChild(document.getElementById('paperAuthor'));
+      }
+      document.getElementById("paperInfoTitle").insertAdjacentHTML('afterend', '<p id="paperTitle">' + d.name + '</p>');
+      document.getElementById("paperInfoAuthor").insertAdjacentHTML('afterend', '<p id="paperAuthor">' + d.author + '</p>');
       document.getElementById("modal-show-paper").classList.remove('dn');
     })
     .style("fill", function (d, i) {
