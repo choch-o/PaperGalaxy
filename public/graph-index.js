@@ -1,7 +1,7 @@
 var w = 1000;
 var h = 600;
 var radius = 10;
-var linkDistance = 200;
+var linkDistance = 50;
 var colors = d3.scale.category10();
 var database = firebase.database();
 var databaseRef = database.ref();
@@ -86,7 +86,7 @@ databaseRef.on('value', function (snapshot) {
   var force = d3.layout.force()
     .size([w, h])
     .linkDistance([linkDistance])
-    .charge([-700]);
+    .charge([-100]);
   var edges = svg.selectAll("line")
     .data(dataset.edges)
     .enter()
