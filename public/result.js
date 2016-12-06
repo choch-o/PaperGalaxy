@@ -1,32 +1,3 @@
-/*
-var database = firebase.database();
-var databaseRef = database.ref();
-var data;
-
-
-databaseRef.on('value', function (snapshot) {
-  var nodes = [];
-  data = snapshot.val();
-  data['nodes'].forEach(function (item, index, array) {
-    nodes.push({
-      'name': item,
-      'author': data['authors'][index]
-    });
-  });
-
-  console.log(data['nodes'][result]);
-}
-function getJsonFromUrl() {
-  var query = location.search.substr(1);
-  var result = {};
-  query.split("&").forEach(function(part) {
-    var item = part.split("=");
-    result[item[0]] = decodeURIComponent(item[1]);
-  });
-  return result;
-}
-*/
-
 var buttonPlus = document.getElementById('fixed-button');
 var buttonAddPaper = document.getElementById('fixed-button-top');
 var buttonAddConnection = document.getElementById('fixed-button-bottom');
@@ -43,14 +14,82 @@ var board2stName = document.getElementById('2ndName');
 var board2stScore = document.getElementById('2ndScore');
 var board3stName = document.getElementById('3rdName');
 var board3stScore = document.getElementById('3rdScore');
-var boardupName = document.getElementById('upName');
-var boardupScore = document.getElementById('upScore');
-var boardmyName = document.getElementById('myName');
-var boardmyScore = document.getElementById('myScore');
-var boarddownName = document.getElementById('downName');
-var boarddownScore = document.getElementById('downScore');
+var board1st = document.getElementById('first');
+var board2nd = document.getElementById('second');
+var board3rd = document.getElementById('third');
+var scoreBoard = document.getElementById('score-board');
 
+var defaultContent =
+  '<tr class="white bg-navy">' +
+  '<th class="pv2 ph3 tl f6 fw6 ttu">#</th>' +
+  '<th class="tr f6 ttu fw6 pv2 ph3">Username</th>' +
+  '<th class="tr f6 ttu fw6 pv2 ph3">Points</th>' +
+  '</tr>' +
+  '<tr id="first" class="navy bg-white">' +
+  '<td class="pv2 ph3">1</td>' +
+  '<td class="pv2 ph3" id="1stName"></td>' +
+  '<td class="pv2 ph3" id="1stScore"></td>' +
+  '</tr>' +
+  '<tr id="second" class="navy bg-white">' +
+  '<td class="pv2 ph3">2</td>' +
+  '<td class="pv2 ph3" id="2ndName"></td>' +
+  '<td class="pv2 ph3" id="2ndScore"></td>' +
+  '</tr>' +
+  '<tr id="third" class="navy bg-white">' +
+  '<td class="pv2 ph3">3</td>' +
+  '<td class="pv2 ph3 tc" id="3rdName"></td>' +
+  '<td class="pv2 ph3" id="3rdScore"></td>' +
+  '</tr>'
+var addContentWhenUserIs4nd =
+  '<tr id="me" class="white bg-light-red">' +
+  '<td class="pv2 ph3">4</td>' +
+  '<td class="pv2 ph3" id="myName"></td>' +
+  '<td class="pv2 ph3" id="myScore"></td>' +
+  '</tr>' +
+  '<tr id="down" class="navy bg-white">' +
+  '<td class="pv2 ph3">5</td>' +
+  '<td class="pv2 ph3" id="downName"></td>' +
+  '<td class="pv2 ph3" id="downScore"></td>' +
+  '</tr>';
 
+var addContentWhenUserIs5th =
+  '<tr id="up" class="navy bg-white">' +
+  '<td class="pv2 ph3">4</td>' +
+  '<td class="pv2 ph3" id="upName"></td>' +
+  '<td class="pv2 ph3 tc" id="upScore"></td>' +
+  '</tr>' +
+  '<tr id="me" class="white bg-light-red">' +
+  '<td class="pv2 ph3">5</td>' +
+  '<td class="pv2 ph3" id="myName"></td>' +
+  '<td class="pv2 ph3" id="myScore"></td>' +
+  '</tr>' +
+  '<tr id="down" class="navy bg-white">' +
+  '<td class="pv2 ph3">6</td>' +
+  '<td class="pv2 ph3" id="downName"></td>' +
+  '<td class="pv2 ph3" id="downScore"></td>' +
+  '</tr>';
+
+var addContentWhenUserIs6th =
+  '<tr id="jum" class="navy bg-white">' +
+  '<td class="pv2 ph3"></td>' +
+  '<td class="pv2 ph3">...</td>' +
+  '<td class="pv2 ph3"></td>' +
+  '</tr>' +
+  '<tr id="up" class="navy bg-white">' +
+  '<td class="pv2 ph3"></td>' +
+  '<td class="pv2 ph3" id="upName"></td>' +
+  '<td class="pv2 ph3 tc" id="upScore"></td>' +
+  '</tr>' +
+  '<tr id="me" class="white bg-light-red">' +
+  '<td class="pv2 ph3"></td>' +
+  '<td class="pv2 ph3" id="myName"></td>' +
+  '<td class="pv2 ph3" id="myScore"></td>' +
+  '</tr>' +
+  '<tr id="down" class="navy bg-white">' +
+  '<td class="pv2 ph3"></td>' +
+  '<td class="pv2 ph3" id="downName"></td>' +
+  '<td class="pv2 ph3" id="downScore"></td>' +
+  '</tr>';
 
 buttonPlus.addEventListener('click', function () {
   document.getElementById('buttons').classList.toggle('dn');
@@ -104,7 +143,7 @@ buttonSendNewPaper.addEventListener('click', function () {
         'author': document.getElementById('paper-author').value
       });
       var score;
-      database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+      database.ref('users/' + uid + '/score').once('value', function (snapshot) {
         if (snapshot.val() == undefined) {
           score = 0;
         } else {
@@ -112,7 +151,8 @@ buttonSendNewPaper.addEventListener('click', function () {
         }
       });
       updates = {};
-      updates['users/' + value.uid + '/score'] = score + 30;
+      updates['users/' + uid + '/score'] = score + 30;
+      updates['/users/' + uid + '/name'] = name;
       database.ref().update(updates);
     }
     modalAddPaper.classList.add('dn');
@@ -154,7 +194,7 @@ buttonSendNewConnection.addEventListener('click', function () {
       'description': description.value,
     });
     var score;
-    database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+    database.ref('users/' + uid + '/score').once('value', function (snapshot) {
       if (snapshot.val() == undefined) {
         score = 0;
       } else {
@@ -162,7 +202,8 @@ buttonSendNewConnection.addEventListener('click', function () {
       }
     });
     updates = {};
-    updates['users/' + value.uid + '/score'] = score + 50;
+    updates['users/' + uid + '/score'] = score + 50;
+    updates['/users/' + uid + '/name'] = name;
     database.ref().update(updates);
   }
   modalAddConnection.classList.add('dn');
@@ -183,31 +224,114 @@ window.onclick = function (event) {
   }
 }
 
-var scores = [];
 firebase.database().ref('users').on('value', function (snapshot) {
+  var scores = [];
+
   var data = snapshot.val();
   for (var key in data) {
-    scores.push ({
+    scores.push({
       score: data[key]['score'],
-      name: data[key]['name']
+      name: data[key]['name'],
+      uid: key
     })
   }
   scores.sort(compare);
-  console.log(scores);
-
-    board1stScore.innerText = scores[0].score;
-    board1stName.innerText = scores[0].name;
+  //console.log(scores);
+  var currentUserUID = firebase.auth().currentUser.uid;
+  board1stScore.innerText = scores[0].score;
+  board1stName.innerText = scores[0].name;
   board2stName.innerHTML = scores[1].name;
   board2stScore.innerHTML = scores[1].score;
   board3stName.innerText = scores[2].name;
-  board3stScore.innerText = scores[3].score;
+  board3stScore.innerText = scores[2].score;
+  removeScoreContentBeforeInsert()
+  if (scores[0].uid == currentUserUID) {
+    board1st.classList.add('white', 'bg-light-red');
+    board1st.classList.remove('navy', 'bg-white');
+    board2nd.classList.add('navy', 'bg-white');
+    board2nd.classList.remove('white', 'bg-light-red');
+    board3rd.classList.add('navy', 'bg-white');
+    board3rd.classList.remove('white', 'bg-light-red');
+  } else if (scores[1].uid == currentUserUID) {
+    board1st.classList.add('navy', 'bg-white');
+    board1st.classList.remove('white', 'bg-light-red');
+    board2nd.classList.add('white', 'bg-light-red');
+    board2nd.classList.remove('navy', 'bg-white');
+    board3rd.classList.add('navy', 'bg-white');
+    board3rd.classList.remove('white', 'bg-light-red');
+  } else if (scores[2].uid == currentUserUID) {
+    board1st.classList.add('navy', 'bg-white');
+    board1st.classList.remove('white', 'bg-light-red');
+    board2nd.classList.add('navy', 'bg-white');
+    board2nd.classList.remove('white', 'bg-light-red');
+    board3rd.classList.add('white', 'bg-light-red');
+    board3rd.classList.remove('navy', 'bg-white');
+  } else if (scores[3].uid == currentUserUID) {
+    board1st.classList.add('navy', 'bg-white');
+    board1st.classList.remove('white', 'bg-light-red');
+    board2nd.classList.add('navy', 'bg-white');
+    board2nd.classList.remove('white', 'bg-light-red');
+    board3rd.classList.add('navy', 'bg-white');
+    board3rd.classList.remove('white', 'bg-light-red');
+    scoreBoard.insertAdjacentHTML('beforeend', addContentWhenUserIs4nd);
+    document.getElementById('myName').innerText = scores[3].name;
+    document.getElementById('myScore').innerText = scores[3].score;
+    document.getElementById('downName').innerText = scores[4].name;
+    document.getElementById('downScore').innerText = scores[4].score;
+  } else if (scores[4].uid == currentUserUID) {
+    board1st.classList.add('navy', 'bg-white');
+    board1st.classList.remove('white', 'bg-light-red');
+    board2nd.classList.add('navy', 'bg-white');
+    board2nd.classList.remove('white', 'bg-light-red');
+    board3rd.classList.add('navy', 'bg-white');
+    board3rd.classList.remove('white', 'bg-light-red');
+    scoreBoard.insertAdjacentHTML('beforeend', addContentWhenUserIs5th);
+    document.getElementById('upName').innerText = scores[3].name;
+    document.getElementById('upScore').innerText = scores[3].score;
+    document.getElementById('myName').innerText = scores[4].name;
+    document.getElementById('myScore').innerText = scores[4].score;
+    document.getElementById('downName').innerText = scores[5].name;
+    document.getElementById('downScore').innerText = scores[5].score;
+  } else {
+    // TODO
+    var i = 5;
+    board1st.classList.add('navy', 'bg-white');
+    board1st.classList.remove('white', 'bg-light-red');
+    board2nd.classList.add('navy', 'bg-white');
+    board2nd.classList.remove('white', 'bg-light-red');
+    board3rd.classList.add('navy', 'bg-white');
+    board3rd.classList.remove('white', 'bg-light-red');
+    scoreBoard.insertAdjacentHTML('beforeend', addContentWhenUserIs6th);
+    document.getElementById('upName').innerText = scores[i - 1].name;
+    document.getElementById('upScore').innerText = scores[i - 1].score;
+    document.getElementById('myName').innerText = scores[i].name;
+    document.getElementById('myScore').innerText = scores[i].score;
+    document.getElementById('downName').innerText = scores[i + 1].name;
+    document.getElementById('downScore').innerText = scores[i + 1].score;
+  }
+
+
 });
 
 function compare(a, b) {
   if (a.score > b.score) {
     return -1;
-  }
-  else {
+  } else {
     return 1;
+  }
+}
+
+function removeScoreContentBeforeInsert() {
+  if (document.getElementById('up') != null) {
+    document.getElementById('score-board').removeChild(document.getElementById('up'));
+  }
+  if (document.getElementById('me') != null) {
+    document.getElementById('score-board').removeChild(document.getElementById('me'));
+  }
+  if (document.getElementById('down') != null) {
+    document.getElementById('score-board').removeChild(document.getElementById('down'));
+  }
+  if (document.getElementById('jum') != null) {
+    document.getElementById('score-board').removeChild(document.getElementById('jum'));
   }
 }

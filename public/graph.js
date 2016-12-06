@@ -141,7 +141,22 @@ databaseRef.on('value', function (snapshot) {
     .attr("id", function (d, i) {
       return 'edge' + i
     })
-    .style("stroke", "#ccc")
+    .style("stroke-width", 3)
+    .style("stroke", function (d) {
+      if (d.info.length < 3) {
+        return "#ddd";
+      }
+      else if (d.info.length < 6) {
+        return "#aaa";
+      }
+      else if (d.info.length < 9){
+        return "#888";
+      }
+      else {
+        return "#444";
+      }
+
+    })
     .on('mouseenter', function (d) {
       document.body.style.cursor = 'pointer';
     })
@@ -202,6 +217,7 @@ databaseRef.on('value', function (snapshot) {
           });
           updates = {};
           updates['users/' + value.uid + '/score'] = score + 10;
+          updates['/users/' + value.uid + '/name'] = value.name;
           database.ref().update(updates);
         });
         document.getElementById('minus' + random + index).addEventListener('click', function () {
@@ -219,6 +235,7 @@ databaseRef.on('value', function (snapshot) {
           });
           updates = {};
           updates['users/' + value.uid + '/score'] = score - 10;
+          updates['/users/' + value.uid + '/name'] = value.name;
           database.ref().update(updates);
         });
       })
@@ -248,8 +265,14 @@ databaseRef.on('value', function (snapshot) {
       }
     })
     .on('click', function (d, i) {
-      document.getElementById("paperInfoTitle").insertAdjacentHTML('afterend', '<p>' + d.name + '</p>');
-      document.getElementById("paperInfoAuthor").insertAdjacentHTML('afterend', '<p>' + d.author + '</p>');
+      if (document.getElementById('paperTitle') != null) {
+        document.getElementById('modal-show-paper-content').removeChild(document.getElementById('paperTitle'));
+      }
+      if (document.getElementById('paperAuthor') != null) {
+        document.getElementById('modal-show-paper-content').removeChild(document.getElementById('paperAuthor'));
+      }
+      document.getElementById("paperInfoTitle").insertAdjacentHTML('afterend', '<p id="paperTitle">' + d.name + '</p>');
+      document.getElementById("paperInfoAuthor").insertAdjacentHTML('afterend', '<p id="paperAuthor">' + d.author + '</p>');
       document.getElementById("modal-show-paper").classList.remove('dn');
     })
     .style("fill", function (d, i) {
