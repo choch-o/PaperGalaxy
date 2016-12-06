@@ -202,6 +202,7 @@ databaseRef.on('value', function (snapshot) {
           });
           updates = {};
           updates['users/' + value.uid + '/score'] = score + 10;
+          updates['/users/' + value.uid + '/name'] = value.name;
           database.ref().update(updates);
         });
         document.getElementById('minus' + random + index).addEventListener('click', function () {
@@ -219,6 +220,7 @@ databaseRef.on('value', function (snapshot) {
           });
           updates = {};
           updates['users/' + value.uid + '/score'] = score - 10;
+          updates['/users/' + value.uid + '/name'] = value.name;
           database.ref().update(updates);
         });
       })

@@ -75,7 +75,7 @@ buttonSendNewPaper.addEventListener('click', function () {
         'author': document.getElementById('paper-author').value
       });
       var score;
-      database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+      database.ref('users/' + uid + '/score').once('value', function (snapshot) {
         if (snapshot.val() == undefined) {
           score = 0;
         } else {
@@ -83,7 +83,8 @@ buttonSendNewPaper.addEventListener('click', function () {
         }
       });
       updates = {};
-      updates['users/' + value.uid + '/score'] = score + 30;
+      updates['users/' + uid + '/score'] = score + 30;
+      updates['/users/' + uid + '/name'] = name;
       database.ref().update(updates);
     }
     modalAddPaper.classList.add('dn');
@@ -125,7 +126,7 @@ buttonSendNewConnection.addEventListener('click', function () {
       'description': description.value,
     });
     var score;
-    database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+    database.ref('users/' + uid + '/score').once('value', function (snapshot) {
       if (snapshot.val() == undefined) {
         score = 0;
       } else {
@@ -133,7 +134,8 @@ buttonSendNewConnection.addEventListener('click', function () {
       }
     });
     updates = {};
-    updates['users/' + value.uid + '/score'] = score + 50;
+    updates['users/' + uid + '/score'] = score + 50;
+    updates['/users/' + uid + '/name'] = name;
     database.ref().update(updates);
   }
   modalAddConnection.classList.add('dn');
@@ -154,8 +156,9 @@ window.onclick = function (event) {
   }
 }
 
-var scores = [];
 firebase.database().ref('users').on('value', function (snapshot) {
+  var scores = [];
+
   var data = snapshot.val();
   for (var key in data) {
     scores.push({
@@ -171,7 +174,7 @@ firebase.database().ref('users').on('value', function (snapshot) {
   board2stName.innerHTML = scores[1].name;
   board2stScore.innerHTML = scores[1].score;
   board3stName.innerText = scores[2].name;
-  board3stScore.innerText = scores[3].score;
+  board3stScore.innerText = scores[2].score;
 });
 
 function compare(a, b) {
