@@ -204,10 +204,7 @@ databaseRef.on('value', function (snapshot) {
           database.ref('connections/' + value.key + '/plusUsers').once('value', function (snapshot) {
             var data = snapshot.val();
             for (var key in data) {
-                              console.log(data[key].uid);
-                console.log(currentUserUID);
               if (data[key].uid == currentUserUID) {
-
                 pushed = true;
               }
             }
@@ -252,7 +249,7 @@ databaseRef.on('value', function (snapshot) {
             database.ref().update(updates);
             document.getElementById('minus' + random + index).innerText = '-' + (value.minus + 1);
             var score;
-            database.ref('connections/' + value.uid + '/score').once('value', function (snapshot) {
+            database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
               if (snapshot.val() == undefined) {
                 score = 0;
               } else {
