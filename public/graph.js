@@ -198,71 +198,79 @@ databaseRef.on('value', function (snapshot) {
         '</table>'
       );
       d.info.forEach(function (value, index, array) {
+        var user = firebase.auth().currentUser;
+        var currentUserUID = firebase.auth().currentUser.uid;
         document.getElementById('plus' + random + index).addEventListener('click', function () {
-          var currentUserUID = firebase.auth().currentUser.uid;
-          var pushed = false;
-          database.ref('connections/' + value.key + '/plusUsers').once('value', function (snapshot) {
-            var data = snapshot.val();
-            for (var key in data) {
-              if (data[key].uid == currentUserUID) {
-                pushed = true;
-              }
-            }
-          });
-          if (!pushed) {
-            var updates = {};
-            updates['/connections/' + value.key + '/plus'] = value.plus + 1;
-            database.ref().update(updates);
-            document.getElementById('plus' + random + index).innerText = '+' + (value.plus + 1);
-            var score;
-            database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
-              if (snapshot.val() == undefined) {
-                score = 0;
-              } else {
-                score = snapshot.val();
+          if (user) {
+            var pushed = false;
+            database.ref('connections/' + value.key + '/plusUsers').once('value', function (snapshot) {
+              var data = snapshot.val();
+              for (var key in data) {
+                if (data[key].uid == currentUserUID) {
+                  pushed = true;
+                }
               }
             });
-            updates = {};
-            updates['users/' + value.uid + '/score'] = score + 10;
-            updates['/users/' + value.uid + '/name'] = value.name;
-            database.ref().update(updates);
-            database.ref('connections/' + value.key + '/plusUsers').push().set({
-              uid: currentUserUID
-            })
+            if (!pushed) {
+              var updates = {};
+              updates['/connections/' + value.key + '/plus'] = value.plus + 1;
+              database.ref().update(updates);
+              document.getElementById('plus' + random + index).innerText = '+' + (value.plus + 1);
+              var score;
+              database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+                if (snapshot.val() == undefined) {
+                  score = 0;
+                } else {
+                  score = snapshot.val();
+                }
+              });
+              updates = {};
+              updates['users/' + value.uid + '/score'] = score + 10;
+              updates['/users/' + value.uid + '/name'] = value.name;
+              database.ref().update(updates);
+              database.ref('connections/' + value.key + '/plusUsers').push().set({
+                uid: currentUserUID
+              })
+            }
+          } else {
+            alert("Please Sign-Up");
           }
         });
 
         document.getElementById('minus' + random + index).addEventListener('click', function () {
-          var currentUserUID = firebase.auth().currentUser.uid;
-          var pushed = false;
-          database.ref('connections/' + value.key + '/minusUsers').once('value', function (snapshot) {
-            var data = snapshot.val();
-            for (var key in data) {
-              if (data[key].uid == currentUserUID) {
-                pushed = true;
-              }
-            }
-          });
-          if (!pushed) {
-            var updates = {};
-            updates['/connections/' + value.key + '/minus'] = value.minus + 1;
-            database.ref().update(updates);
-            document.getElementById('minus' + random + index).innerText = '-' + (value.minus + 1);
-            var score;
-            database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
-              if (snapshot.val() == undefined) {
-                score = 0;
-              } else {
-                score = snapshot.val();
+          if (user) {
+            var pushed = false;
+            database.ref('connections/' + value.key + '/minusUsers').once('value', function (snapshot) {
+              var data = snapshot.val();
+              for (var key in data) {
+                if (data[key].uid == currentUserUID) {
+                  pushed = true;
+                }
               }
             });
-            updates = {};
-            updates['users/' + value.uid + '/score'] = score - 10;
-            updates['/users/' + value.uid + '/name'] = value.name;
-            database.ref().update(updates);
-            database.ref('connections/' + value.key + '/minusUsers').push().set({
-              uid: currentUserUID
-            })
+            if (!pushed) {
+              var updates = {};
+              updates['/connections/' + value.key + '/minus'] = value.minus + 1;
+              database.ref().update(updates);
+              document.getElementById('minus' + random + index).innerText = '-' + (value.minus + 1);
+              var score;
+              database.ref('users/' + value.uid + '/score').once('value', function (snapshot) {
+                if (snapshot.val() == undefined) {
+                  score = 0;
+                } else {
+                  score = snapshot.val();
+                }
+              });
+              updates = {};
+              updates['users/' + value.uid + '/score'] = score - 10;
+              updates['/users/' + value.uid + '/name'] = value.name;
+              database.ref().update(updates);
+              database.ref('connections/' + value.key + '/minusUsers').push().set({
+                uid: currentUserUID
+              })
+            }
+          } else {
+            alert("Please Sign-Up");
           }
         });
 

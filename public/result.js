@@ -134,8 +134,8 @@ buttonSendNewPaper.addEventListener('click', function () {
       name = user.displayName;
       uid = user.uid;
     } else {
-      name = "annonymous";
-      uid = 0;
+      alert("Please Sign-Up");
+      return;
     }
     if (user) {
       firebase.database().ref('users/' + uid + '/papers').push().set({
@@ -172,8 +172,8 @@ buttonSendNewConnection.addEventListener('click', function () {
     name = user.displayName;
     uid = user.uid;
   } else {
-    name = "annonymous";
-    uid = 0;
+    alert("Please Sign-Up");
+    return;
   }
   var newPostRef = firebase.database().ref('connections').push();
   newPostRef.set({
