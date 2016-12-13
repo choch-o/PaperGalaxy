@@ -1,16 +1,22 @@
-var w = 1000;
-var h = 600;
-var radius = 10;
-var linkDistance = 200;
-var colors = d3.scale.category10();
-var database = firebase.database();
+var w = 1000;       // Width for SVG container
+var h = 600;        // Height for SVG container 
+var radius = 10;    // Radius of each circle for nodes
+var linkDistance = 200;    // length of each edge
+var colors = d3.scale.category10(); // A categorical scheme with 10 colors.
+var database = firebase.database(); // Get a reference to the database service
 var databaseRef = database.ref();
+
+// create SVG container to hold the visualization to graph in result.html
 var svg = d3.select("#graph").append("svg").attr({
   "width": w,
   "height": h
 });
+
 var not_first = false;
+// 
 databaseRef.on('value', function (snapshot) {
+
+  // If SVG container has already been added, remove and create it again.
   if (not_first) {
     d3.select("svg").remove();
     svg = d3.select("#graph").append("svg").attr({
@@ -18,20 +24,29 @@ databaseRef.on('value', function (snapshot) {
       "height": h
     });
   }
-  var nodes = [];
-  var edges = [];
-  var data = snapshot.val();
+
+  var nodes = []; // List of nodes 
+  var edges = []; // List of edges 
+  var data = snapshot.val();  // Data of the whole graph
+
+  // Iterate through data['nodes'] and push information of each node into nodes
   data['nodes'].forEach(function (item, index, array) {
     nodes.push({
       'name': item,
       'author': data['authors'][index]
     });
   });
+
+  // Iterate through data['connections'] and push information of each edge into edges 
   for (var key in data['connections']) {
     var inserted = false;
     var item = data['connections'][key];
 
+    // If an edge with same source and target has already been pushed to edges,
+    // just add additinal info to the corresponding edge.
     edges.forEach(function (value, index, array) {
+
+      // Two symmetrical cases with source and target of connection - case 1
       if (value.source == item['paper1'] && value.target == item['paper2']) {
         inserted = true;
         value.info.push({
@@ -44,6 +59,7 @@ databaseRef.on('value', function (snapshot) {
           'key': key
         });
       }
+      // Two symmetrical cases with source and target of connection - case 2
       if (value.source == item['paper2'] && value.target == item['paper1']) {
         inserted = true;
         value.info.push({
@@ -58,6 +74,8 @@ databaseRef.on('value', function (snapshot) {
       }
     });
 
+    // If the information of corresponding edge has not been yet pushed to edges yet,
+    // push information of each edge into edges.
     if (!inserted) {
       edges.push({
         'source': item['paper1'],
@@ -75,11 +93,13 @@ databaseRef.on('value', function (snapshot) {
       });
     }
   }
-  var filteredNodes = [];
-  var filteredEdges = [];
-  var searchResult = document.getElementById('search-result');
-  var result = getJsonFromUrl();
 
+  var filteredNodes = []; // List of filtered nodes that are relevant to result
+  var filteredEdges = []; // List of filtered edges that are relevant to result
+  var searchResult = document.getElementById('search-result');
+  var result = getJsonFromUrl();  // 
+
+  // Push the 
   filteredNodes.push({
     'orig_idx': Number(result.pid),
     'name': nodes[Number(result.pid)].name,
@@ -87,6 +107,7 @@ databaseRef.on('value', function (snapshot) {
   });
 
   var i = 1;
+  // if one of the 
   edges.forEach(function (value) {
     if (value['source'] == result.pid) {
       filteredEdges.push({
@@ -115,6 +136,7 @@ databaseRef.on('value', function (snapshot) {
     }
   });
 
+  // Dataset of graph including filtered nodes and filtered edges
   var dataset = {
     'nodes': filteredNodes,
     'edges': filteredEdges
@@ -132,17 +154,21 @@ databaseRef.on('value', function (snapshot) {
     .size([w, h])
     .linkDistance([linkDistance])
     .charge([-700]);
+
+  // Bind each edge to line
   var edges = svg.selectAll("line")
-    .data(dataset.edges)
-    .enter()
-    .append("line")
-    .attr("class", "dim")
-    .attr("id", function (d, i) {
+    .data(dataset.edges)          // For each edge in dataset.edges
+    .enter().append("line")       // Append line
+    .attr("class", "dim")         // With class = "dim"
+    .attr("id", function (d, i) { // With id =  "edgei"
       return 'edge' + i
     })
     .style("stroke-width", 3)
-    .style("stroke", function (d) {
-      if (d.info.length < 3) {
+    .style("stroke", function (d) { 
+
+      // Give diffrent color to edges based on the number of info it contains
+      // Darker if the number is higher
+      if (d.info.length < 3) {      
         return "#ddd";
       } else if (d.info.length < 6) {
         return "#aaa";
@@ -151,15 +177,14 @@ databaseRef.on('value', function (snapshot) {
       } else {
         return "#444";
       }
-
     })
-    .on('mouseenter', function (d) {
+    .on('mouseenter', function (d) {  // When mouse-enter, change cursor to pointer
       document.body.style.cursor = 'pointer';
     })
-    .on('mouseleave', function (d) {
+    .on('mouseleave', function (d) {  // When mouse-leave, change cursor to default
       document.body.style.cursor = 'default';
     })
-    .on('click', function (d, i) {
+    .on('click', function (d, i) {    // When clicked
 
       if (document.getElementById('tableContent') != null) {
 
@@ -272,19 +297,19 @@ databaseRef.on('value', function (snapshot) {
       })
       document.getElementById("modal-show-connection").classList.remove('dn');
     });
-
+  
+  // Bind each node to circle
   var nodes = svg.selectAll("circle")
-    .data(dataset.nodes)
-    .enter()
-    .append("circle")
-    .attr("r", function (d) {
-      if (d.orig_idx == result.pid) {
+    .data(dataset.nodes)        // For each node in dataset.nodes
+    .enter().append("circle")   // Append circle
+    .attr("r", function (d) {   // With cirtain radius as following
+      if (d.orig_idx == result.pid) { //if the node is the searched node
         return 15;
-      } else {
+      } else {                        // else if the node is relevant to searched node
         return radius - .75;
       }
     })
-    .attr("class", "dim")
+    .attr("class", "dim")       // With class "dim"
     .on('mouseover', function (d) {
       document.body.style.cursor = 'pointer';
       d3.select(d3.selectAll("text")[0][d.index]).style("visibility", "visible");
@@ -309,7 +334,7 @@ databaseRef.on('value', function (snapshot) {
     .style("fill", function (d, i) {
       return colors(i);
     })
-    .call(force.drag)
+    .call(force.drag);
 
   var nodelabels = svg.selectAll(".nodelabel")
     .data(dataset.nodes)
@@ -356,26 +381,7 @@ databaseRef.on('value', function (snapshot) {
     .text(function (d) {
       return d.label
     });
-  /*
-    var edgepaths = svg.selectAll(".edgepath")
-      .data(dataset.edges)
-      .enter()
-      .append('path')
-      .attr({
-        'd': function (d) {
-          return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
-        },
-        'class': 'edgepath',
-        'fill-opacity': 0,
-        'stroke-opacity': 0,
-        'fill': 'blue',
-        'stroke': 'red',
-        'id': function (d, i) {
-          return 'edgepath' + i
-        }
-      })
-      .style("pointer-events", "none");
-  */
+
   force
     .nodes(dataset.nodes)
     .links(dataset.edges)
@@ -444,12 +450,7 @@ databaseRef.on('value', function (snapshot) {
           return d.y - 10;
         }
       });
-    /*
-        edgepaths.attr('d', function (d) {
-          var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
-          return path
-        });
-    */
+
     edgelabels.attr('transform', function (d, i) {
       if (d.target.x < d.source.x) {
         bbox = this.getBBox();

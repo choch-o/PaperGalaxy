@@ -1,38 +1,54 @@
-var w = 1000;
-var h = 600;
-var radius = 5;
-var linkDistance = 50;
-var colors = d3.scale.category10();
-var database = firebase.database();
-var databaseRef = database.ref();
+var w = 1000;   // Width for SVG container
+var h = 600;    // Height for SVG container 
+var radius = 5; // Radius of each circle for nodes
+var linkDistance = 50; // length of each edge
+var colors = d3.scale.category10(); // A categorical scheme with 10 colors.
+var database = firebase.database(); // Get a reference to the database service
+var databaseRef = database.ref();   // Get a reference to the database service
+
+// create SVG container to hold the visualization to graph-index in index.html
 var svg = d3.select("#graph-index").append("svg").attr({
   "width": w,
   "height": h
 });
-var not_first = false;
 
+var not_first = false;
+// Read data from a Database. 
+// Callback will be triggered for the initial data and again whenever the data changes.
 databaseRef.on('value', function (snapshot) {
+
+  // If SVG container has already been added, remove and create it again.
   if (not_first) {
+    console.log("not_first");
     d3.select("svg").remove();
-    svg = d3.select("#graph").append("svg").attr({
+    svg = d3.select("#graph-index").append("svg").attr({
       "width": w,
       "height": h
     });
   }
-  var nodes = [];
-  var edges = [];
-  var data = snapshot.val();
+
+  var nodes = []; // List of nodes 
+  var edges = []; // List of edges
+  var data = snapshot.val(); // Data of the whole graph
+  
+  // Iterate through data['nodes'] and push information of each node into nodes
   data['nodes'].forEach(function (item, index, array) {
     nodes.push({
       'name': item,
       'author': data['authors'][index]
     });
   });
+
+  // Iterate through data['connections'] and push information of each edge into edges 
   for (var key in data['connections']) {
     var inserted = false;
     var item = data['connections'][key];
 
+    // If an edge with same source and target has already been pushed to edges,
+    // just add additinal info to the corresponding edge.
     edges.forEach(function (value, index, array) {
+
+      // Two symmetrical cases with source and target of connection - case 1
       if (value.source == item['paper1'] && value.target == item['paper2']) {
         inserted = true;
         value.info.push({
@@ -45,6 +61,8 @@ databaseRef.on('value', function (snapshot) {
           'key': key
         });
       }
+
+      // Two symmetrical cases with source and target of connection - case 2
       if (value.source == item['paper2'] && value.target == item['paper1']) {
         inserted = true;
         value.info.push({
@@ -59,6 +77,8 @@ databaseRef.on('value', function (snapshot) {
       }
     });
 
+    // If the information of corresponding edge has not been yet pushed to edges yet,
+    // push information of each edge into edges.
     if (!inserted) {
       edges.push({
         'source': item['paper1'],
@@ -77,107 +97,53 @@ databaseRef.on('value', function (snapshot) {
     }
   }
 
-
+  // Dataset of entire graph including nodes and edges
   var dataset = {
     'nodes': nodes,
     'edges': edges
   };
 
+  //create a force layout object and define its properties.
   var force = d3.layout.force()
     .size([w, h])
     .linkDistance([linkDistance])
     .charge([-100]);
+
+  // Now let's bind the nodes and edges to the SVG container.
+  // We begin with the edges. The order here is important, 
+  // because we want the nodes to appear "on top of" the edges.
+
+  // Bind each edge to line
   var edges = svg.selectAll("line")
-    .data(dataset.edges)
-    .enter()
-    .append("line")
-    .attr("class", "dim")
-    .attr("id", function (d, i) {
+    .data(dataset.edges)          // For each edge in dataset.edges
+    .enter().append("line")       // Append line
+    .attr("class", "dim")         // With class = "dim"
+    .attr("id", function (d, i) { // With id =  "edgei"
       return 'edge' + i
     })
-    .style("stroke", "#ccc")
-    .on('mouseenter', function (d) {
-      document.body.style.cursor = 'pointer';
-    })
-    .on('mouseleave', function (d) {
-      document.body.style.cursor = 'default';
-    })
-    .on('click', function (d, i) {
+    .style("stroke", "#ccc");     
 
-      if (document.getElementById('tableContent') != null) {
-
-        document.getElementById('tableConnection').removeChild(document.getElementById('tableContent'));
-      }
-      var random = Math.random().toString().replace('.', 'a');
-      tableContent = '';
-      d.info.forEach(function (value, index, array) {
-        tableContent += '<tr class="striped--light-gray">';
-        if (value.label == 0) {
-          tableContent += '<td class="pv2 ph3">No Response</td>';
-        } else if (value.label == 1) {
-          tableContent += '<td class="pv2 ph3">Similar Motivation</td>';
-        } else if (value.label == 2) {
-          tableContent += '<td class="pv2 ph3">Similar Technique</td>';
-        } else if (value.label == 3) {
-          tableContent += '<td class="pv2 ph3">Similar Workflow</td>';
-        }
-        tableContent +=
-          '<td class="pv2 ph3">' + value.description + '</td>' +
-          '<td id="plus' + random + index + '" class="pv2 ph3 green grow">+' + value.plus + '</td>' +
-          '<td id="minus' + random + index + '" class="pv2 ph3 dark-red grow">-' + value.minus + '</td>' +
-          '</tr>';
-      });
-      document.getElementById('tableConnection').insertAdjacentHTML('beforeend',
-        '<table id="tableContent" class="collapse ba br2 b--black-10 pv2 ph3">' +
-        '<tbody>' +
-        '<tr class="striped--light-gray">' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Relation</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Description</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Plus</th>' +
-        '<th class="pv2 ph3 tl f6 fw6 ttu">Minus</th>' +
-        '</tr>' +
-        tableContent +
-        '</tbody>' +
-        '</table>'
-      );
-      d.info.forEach(function (value, index, array) {
-        document.getElementById('plus' + random + index).addEventListener('click', function () {
-          var updates = {};
-          updates['/connections/' + value.key + '/plus'] = value.plus + 1;
-          database.ref().update(updates);
-          document.getElementById('plus' + random + index).innerText = '+' + (value.plus + 1);
-        });
-        document.getElementById('minus' + random + index).addEventListener('click', function () {
-          var updates = {};
-          updates['/connections/' + value.key + '/minus'] = value.minus + 1;
-          database.ref().update(updates);
-          document.getElementById('minus' + random + index).innerText = '-' + (value.minus + 1);
-        });
-      })
-      document.getElementById("modal-show-connection").classList.remove('dn');
-    });
-
+  // Bind each node to circle
   var nodes = svg.selectAll("circle")
-    .data(dataset.nodes)
-    .enter()
-    .append("circle")
-    .attr("r", function (d) { return radius - .75; })
-    .attr("class", "dim")
-    .on('mouseover', function (d) {
+    .data(dataset.nodes)            // For each node in dataset.nodes
+    .enter().append("circle")       // Append circle
+    .attr("r", function (d) { return radius - .75; }) // With cirtain radius
+    .attr("class", "dim")           // With class "dim"
+    .on('mouseover', function (d) { // When mouse-over, change cursor to pointer and show text 
       document.body.style.cursor = 'pointer';
       d3.select(d3.selectAll("text")[0][d.index]).style("visibility", "visible");
     })
-    .on('mouseout', function (d) {
+    .on('mouseout', function (d) {  // When mouse-out, change cursor to default and hide text
       document.body.style.cursor = 'default';
       d3.select(d3.selectAll("text")[0][d.index]).style("visibility", "hidden");
     })
-    .on('click', function (d, i) {
+    .on('click', function (d, i) {  // When Clicked, Show result.html page with corresponding id
       window.location = 'result.html?pid=' + i;
     })
-    .style("fill", function (d, i) {
+    .style("fill", function (d, i) {  // Fill circles with colors(i)
       return colors(i);
     })
-    .call(force.drag)
+    .call(force.drag); 
 
   var nodelabels = svg.selectAll(".nodelabel")
     .data(dataset.nodes)
@@ -192,76 +158,26 @@ databaseRef.on('value', function (snapshot) {
       'visibility': function (d) { return "hidden" }
     });
 
-  var edgelabels = svg.selectAll(".edgelabel")
-    .data(dataset.edges)
-    .enter()
-    .append('text')
-    .style("pointer-events", "none")
-    .attr({
-      'class': 'edgelabel',
-      'id': function (d, i) {
-        return 'edgelabel' + i
-      },
-      'dx': 80,
-      'dy': 0,
-      'font-size': 10,
-      'fill': '#aaa'
-    });
-
-  edgelabels.append('textPath')
-    .attr('xlink:href', function (d, i) {
-      return '#edgepath' + i
-    })
-    .style("pointer-events", "none")
-    .text(function (d) {
-      return d.label
-    });
-/*
-  var edgepaths = svg.selectAll(".edgepath")
-    .data(dataset.edges)
-    .enter()
-    .append('path')
-    .attr({
-      'd': function (d) {
-        return 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y
-      },
-      'class': 'edgepath',
-      'fill-opacity': 0,
-      'stroke-opacity': 0,
-      'fill': 'blue',
-      'stroke': 'red',
-      'id': function (d, i) {
-        return 'edgepath' + i
-      }
-    })
-    .style("pointer-events", "none");
-*/
+  // Everything is set up now so it's time to turn
+  // things over to the force layout. Here we go.
   force
     .nodes(dataset.nodes)
     .links(dataset.edges)
     .on("tick", tick)
     .start();
 
-
-  svg.append('defs').append('marker')
-    .attr({
-      'id': 'arrowhead',
-      'viewBox': '-0 -5 10 10',
-      'refX': 25,
-      'refY': 0,
-      //'markerUnits':'strokeWidth',
-      'orient': 'auto',
-      'markerWidth': 10,
-      'markerHeight': 10,
-      'xoverflow': 'visible'
-    })
-    .append('svg:path')
-    .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
-    .attr('fill', '#ccc')
-    .attr('stroke', '#ccc');
-
-
+  // This function is executed when force layout calculations are concluded. 
+  // The layout will have set various properties in our nodes and edges objects 
+  // that we can use to position them within the SVG container.
   function tick() {
+
+    // First let's reposition the nodes. As the force layout runs, 
+    // it updates the `x` and `y` properties that define where the node should be centered.
+    // To move the node, we set the appropriate SVG
+    // attributes to their new values. We also have to
+    // give the node a non-zero radius so that it's visible
+    // in the container.
+
     nodes.attr("cx", function (d) {
         return d.x = Math.max(radius + 200, Math.min(w - radius - 200, d.x));
       })
@@ -269,60 +185,20 @@ databaseRef.on('value', function (snapshot) {
           return d.y = Math.max(radius + 10, Math.min(h - radius, d.y));
       });
 
-
     edges.attr({
-      "x1": function (d) {
-        return d.source.x;
-      },
-      "y1": function (d) {
-        return d.source.y;
-      },
-      "x2": function (d) {
-        return d.target.x;
-      },
-      "y2": function (d) {
-        return d.target.y;
-      }
+      "x1": function (d) {return d.source.x;},
+      "y1": function (d) {return d.source.y;},
+      "x2": function (d) {return d.target.x;},
+      "y2": function (d) {return d.target.y;}
     });
 
-
-    nodelabels.attr("x", function (d) {
-        return d.x;
-      })
-      .attr("y", function (d) {
-          return d.y - 10;
-      });
-/*
-    edgepaths.attr('d', function (d) {
-      var path = 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y;
-      return path
+    nodelabels
+      .attr("x", function (d) {return d.x;})
+      .attr("y", function (d) {return d.y - 10;
     });
-*/
-    edgelabels.attr('transform', function (d, i) {
-      if (d.target.x < d.source.x) {
-        bbox = this.getBBox();
-        rx = bbox.x + bbox.width / 2;
-        ry = bbox.y + bbox.height / 2;
-        return 'rotate(180 ' + rx + ' ' + ry + ')';
-      } else {
-        return 'rotate(0)';
-      }
-    });
-
   }
 
+  // end of the loop
   not_first = true;
-
 });
 
-
-
-function getJsonFromUrl() {
-  var query = location.search.substr(1);
-  var result = {};
-  query.split("&").forEach(function (part) {
-    var item = part.split("=");
-    result[item[0]] = decodeURIComponent(item[1]);
-  });
-  return result;
-}
