@@ -134,8 +134,8 @@ buttonSendNewPaper.addEventListener('click', function () {
       name = user.displayName;
       uid = user.uid;
     } else {
-      name = "annonymous";
-      uid = 0;
+      alert("Please Sign-Up");
+      return;
     }
     if (user) {
       firebase.database().ref('users/' + uid + '/papers').push().set({
@@ -172,8 +172,8 @@ buttonSendNewConnection.addEventListener('click', function () {
     name = user.displayName;
     uid = user.uid;
   } else {
-    name = "annonymous";
-    uid = 0;
+    alert("Please Sign-Up");
+    return;
   }
   var newPostRef = firebase.database().ref('connections').push();
   newPostRef.set({
@@ -293,8 +293,12 @@ firebase.database().ref('users').on('value', function (snapshot) {
     document.getElementById('downName').innerText = scores[5].name;
     document.getElementById('downScore').innerText = scores[5].score;
   } else {
-    // TODO
-    var i = 5;
+    var rank = 0;
+    for (var i = 0; i < scores.length; i++) {
+      if (scores[i].uid == currentUserUID) {
+        rank = i;
+      }
+    }
     board1st.classList.add('navy', 'bg-white');
     board1st.classList.remove('white', 'bg-light-red');
     board2nd.classList.add('navy', 'bg-white');
@@ -302,12 +306,12 @@ firebase.database().ref('users').on('value', function (snapshot) {
     board3rd.classList.add('navy', 'bg-white');
     board3rd.classList.remove('white', 'bg-light-red');
     scoreBoard.insertAdjacentHTML('beforeend', addContentWhenUserIs6th);
-    document.getElementById('upName').innerText = scores[i - 1].name;
-    document.getElementById('upScore').innerText = scores[i - 1].score;
-    document.getElementById('myName').innerText = scores[i].name;
-    document.getElementById('myScore').innerText = scores[i].score;
-    document.getElementById('downName').innerText = scores[i + 1].name;
-    document.getElementById('downScore').innerText = scores[i + 1].score;
+    document.getElementById('upName').innerText = scores[rank - 1].name;
+    document.getElementById('upScore').innerText = scores[rank - 1].score;
+    document.getElementById('myName').innerText = scores[rank].name;
+    document.getElementById('myScore').innerText = scores[rank].score;
+    document.getElementById('downName').innerText = scores[rank + 1].name;
+    document.getElementById('downScore').innerText = scores[rank + 1].score;
   }
 
 
